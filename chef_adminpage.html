@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chef Kyegonza Admin - Manage Menu</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome (no emojis used) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: #f8f5f0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .card {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .btn-primary {
+      background-color: #4a0404;
+      color: white;
+      transition: 0.2s;
+    }
+    .btn-primary:hover {
+      background-color: #b28950;
+    }
+    .btn-secondary {
+      background-color: #e5e7eb;
+      color: #1f2937;
+      transition: 0.2s;
+    }
+    .btn-secondary:hover {
+      background-color: #d1d5db;
+    }
+    .btn-danger {
+      background-color: #dc2626;
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #b91c1c;
+    }
+    .image-preview {
+      max-width: 150px;
+      max-height: 150px;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+    }
+    .product-item {
+      transition: background-color 0.2s;
+    }
+    .product-item:hover {
+      background-color: #fef9f5;
+    }
+  </style>
+</head>
+<body class="p-6">
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-[#4a0404]">Chef Kyegonza Admin Panel</h1>
+      <a href="index.html" class="text-sm text-stone-500 hover:text-[#4a0404] transition">
+        <i class="fas fa-arrow-left mr-1"></i> Back to Website
+      </a>
+    </div>
+
+    <!-- Add Product Form -->
+    <div class="card p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">Add New Menu Item</h2>
+      <form id="productForm">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Product Name *</label>
+          <input type="text" id="productName" required class="w-full border border-stone-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4a0404]">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Price * (example: 18,000/-)</label>
+          <input type="text" id="productPrice" required placeholder="18,000/-" class="w-full border border-stone-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4a0404]">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Description *</label>
+          <textarea id="productDesc" rows="3" required class="w-full border border-stone-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4a0404]"></textarea>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Product Image</label>
+          <div class="flex items-center gap-4 flex-wrap">
+            <label class="btn-secondary px-4 py-2 rounded-full text-sm font-medium cursor-pointer inline-flex items-center gap-2">
+              <i class="fas fa-folder-open"></i> Choose Image
+              <input type="file" id="imageFile" accept="image/*" class="hidden">
+            </label>
+            <span id="fileName" class="text-xs text-stone-500">No file selected</span>
+          </div>
+          <div id="imagePreviewContainer" class="mt-3 hidden">
+            <img id="imagePreview" class="image-preview" alt="Preview">
+            <p class="text-xs text-stone-500 mt-1">Preview (will be uploaded when you add product)</p>
+          </div>
+          <input type="hidden" id="imageUrl" value="">
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" id="submitBtn" class="btn-primary px-6 py-2 rounded-full font-semibold">Add Product</button>
+          <button type="button" id="resetBtn" class="border border-stone-300 px-6 py-2 rounded-full">Reset</button>
+        </div>
+        <div id="formMessage" class="mt-4 text-sm"></div>
+      </form>
+    </div>
+
+    <!-- Existing Products List -->
+    <div class="card p-6">
+      <h2 class="text-xl font-semibold mb-4">Existing Menu Items</h2>
+      <div id="productList" class="space-y-2 max-h-96 overflow-y-auto">
+        <p class="text-stone-400 text-center py-6">Loading products...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC473vxlU0ctrncjR8vUO-RcJc3nYrzX7I",
+      authDomain: "chef-eab8e.firebaseapp.com",
+      projectId: "chef-eab8e",
+      storageBucket: "chef-eab8e.firebasestorage.app",
+      messagingSenderId: "46565559235",
+      appId: "1:46565559235:web:dbd2e768bbb2e69c06cb76",
+      measurementId: "G-0ZTZYMZNTV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productsCollection = collection(db, "food");
+    const ADMIN_SECRET = "ANUBIS_ST_68";
+
+    // Cloudinary upload preset and cloud name
+    const CLOUD_NAME = "dopuutcka";
+    const UPLOAD_PRESET = "chef_anubis";
+
+    // DOM elements
+    const form = document.getElementById('productForm');
+    const nameInput = document.getElementById('productName');
+    const priceInput = document.getElementById('productPrice');
+    const descInput = document.getElementById('productDesc');
+    const imageFileInput = document.getElementById('imageFile');
+    const fileNameSpan = document.getElementById('fileName');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImg = document.getElementById('imagePreview');
+    const imageUrlHidden = document.getElementById('imageUrl');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const formMessage = document.getElementById('formMessage');
+    const productListDiv = document.getElementById('productList');
+
+    let selectedFile = null; // store the selected file object
+
+    // Handle file selection
+    imageFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        selectedFile = null;
+        fileNameSpan.textContent = 'No file selected';
+        previewContainer.classList.add('hidden');
+        imageUrlHidden.value = '';
+        return;
+      }
+      selectedFile = file;
+      fileNameSpan.textContent = file.name;
+
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        previewImg.src = event.target.result;
+        previewContainer.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+      // Clear any existing image URL (we will upload later)
+      imageUrlHidden.value = '';
+    });
+
+    // Upload image to Cloudinary and return URL
+    async function uploadImage(file) {
+      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: formData
+        });
+        if (!response.ok) {
+          const err = await response.text();
+          throw new Error(`Upload failed: ${err}`);
+        }
+        const data = await response.json();
+        return data.secure_url;
+      } catch (err) {
+        console.error('Cloudinary upload error:', err);
+        throw err;
+      }
+    }
+
+    // Add product to Firestore
+    async function addProduct(productData) {
+      try {
+        const docData = {
+          name: productData.name,
+          price: productData.price,
+          description: productData.description,
+          image: productData.image || "food1.jpg", // fallback image if none
+          admin_key: ADMIN_SECRET
+        };
+        await addDoc(productsCollection, docData);
+        formMessage.innerHTML = '<span class="text-green-600"><i class="fas fa-check-circle"></i> Product added successfully!</span>';
+        resetForm();
+        loadProducts(); // refresh list
+      } catch (err) {
+        console.error(err);
+        formMessage.innerHTML = `<span class="text-red-600"><i class="fas fa-exclamation-circle"></i> Error adding product: ${err.message}</span>`;
+      }
+    }
+
+    // Delete product
+    async function deleteProduct(productId) {
+      if (confirm("Are you sure you want to delete this item?")) {
+        try {
+          await deleteDoc(doc(db, "food", productId));
+          formMessage.innerHTML = '<span class="text-green-600"><i class="fas fa-check-circle"></i> Product deleted successfully.</span>';
+          loadProducts();
+        } catch (err) {
+          formMessage.innerHTML = `<span class="text-red-600">Delete failed: ${err.message}</span>`;
+        }
+      }
+    }
+
+    // Load and display existing products
+    async function loadProducts() {
+      productListDiv.innerHTML = '<p class="text-stone-400 text-center py-6">Loading products...</p>';
+      try {
+        const snapshot = await getDocs(productsCollection);
+        if (snapshot.empty) {
+          productListDiv.innerHTML = '<p class="text-stone-400 text-center py-6">No products yet. Add some above.</p>';
+          return;
+        }
+        let html = '';
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          html += `
+            <div class="product-item flex items-center justify-between border-b border-stone-100 py-3 px-2 rounded-lg">
+              <div class="flex items-center gap-3 flex-1">
+                <img src="${data.image || 'food1.jpg'}" class="w-12 h-12 object-cover rounded-lg" onerror="this.src='food1.jpg'">
+                <div>
+                  <p class="font-semibold">${escapeHtml(data.name || 'Unnamed')}</p>
+                  <p class="text-xs text-stone-500">${escapeHtml(data.price || 'N/A')}</p>
+                  <p class="text-xs text-stone-400 line-clamp-1">${escapeHtml(data.description || '')}</p>
+                </div>
+              </div>
+              <button data-id="${docSnap.id}" class="delete-product-btn text-red-500 hover:text-red-700 text-sm p-2">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          `;
+        });
+        productListDiv.innerHTML = html;
+
+        // Attach delete event listeners
+        document.querySelectorAll('.delete-product-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = btn.getAttribute('data-id');
+            deleteProduct(id);
+          });
+        });
+      } catch (err) {
+        console.error(err);
+        productListDiv.innerHTML = '<p class="text-red-500">Error loading products.</p>';
+      }
+    }
+
+    // Simple HTML escape to prevent XSS
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+
+    // Reset form fields
+    function resetForm() {
+      nameInput.value = '';
+      priceInput.value = '';
+      descInput.value = '';
+      imageFileInput.value = '';
+      selectedFile = null;
+      fileNameSpan.textContent = 'No file selected';
+      previewContainer.classList.add('hidden');
+      previewImg.src = '';
+      imageUrlHidden.value = '';
+      formMessage.innerHTML = '';
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = nameInput.value.trim();
+      const price = priceInput.value.trim();
+      const description = descInput.value.trim();
+
+      if (!name || !price || !description) {
+        formMessage.innerHTML = '<span class="text-red-600">Please fill all required fields (Name, Price, Description).</span>';
+        return;
+      }
+
+      // Disable submit button to prevent double submission
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Adding...';
+
+      try {
+        let imageUrl = imageUrlHidden.value.trim();
+
+        // If user selected a file and it hasn't been uploaded yet, upload it now
+        if (selectedFile && !imageUrl) {
+          formMessage.innerHTML = '<span class="text-blue-600"><i class="fas fa-spinner fa-spin"></i> Uploading image...</span>';
+          imageUrl = await uploadImage(selectedFile);
+          imageUrlHidden.value = imageUrl;
+        }
+
+        // Add product to Firestore
+        await addProduct({ name, price, description, image: imageUrl });
+      } catch (err) {
+        console.error(err);
+        formMessage.innerHTML = `<span class="text-red-600"><i class="fas fa-exclamation-circle"></i> ${err.message}</span>`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add Product';
+      }
+    });
+
+    resetBtn.addEventListener('click', resetForm);
+
+    // Load products on page load
+    loadProducts();
+  </script>
+</body>
+</html>
