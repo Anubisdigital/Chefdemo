@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Chef Kyegonza | Location & Contact</title>
+    <link rel="icon" type="image/png" href="ch.png">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Puter.js AI SDK -->
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            color: #111;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        :root {
+            --primary: #4397D3;
+            --black: #000000;
+            --white: #ffffff;
+        }
+
+        .no-radius, 
+        .dropdown-trigger,
+        .static-contact-row a,
+        .ai-fixed-btn,
+        .close-modal-x,
+        .chat-input-area button,
+        .dropdown-menu a {
+            border-radius: 0 !important;
+        }
+
+        header {
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #eee;
+            backdrop-filter: blur(2px);
+            left: 0;
+            right: 0;
+        }
+
+        .logo-container img {
+            height: 45px;
+        }
+
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-trigger {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .dropdown-trigger:hover {
+            background-color: var(--black);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+            z-index: 1100;
+            overflow-y: auto;
+            padding: 8px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 22px;
+            color: var(--black);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-menu a i {
+            width: 28px;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .dropdown-menu a:hover {
+            background: #f5f5f5;
+            border-left-color: var(--primary);
+        }
+
+        /* location main */
+        .location-hero {
+            padding: 130px 5% 40px;
+            text-align: center;
+            background: #fefefe;
+        }
+
+        .location-hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+        }
+
+        .highlight {
+            color: var(--primary);
+        }
+
+        .location-container {
+            padding: 20px 5% 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 48px;
+            background: #fff;
+        }
+
+        .map-wrapper {
+            flex: 1.5;
+            min-width: 300px;
+            border: 1px solid #eee;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 400px;
+            border: 0;
+            display: block;
+        }
+
+        .info-card {
+            flex: 1;
+            background: #fafafc;
+            padding: 28px 30px;
+            border: 1px solid #eaeaea;
+        }
+
+        .info-card h2 {
+            font-size: 1.6rem;
+            border-left: 4px solid var(--primary);
+            padding-left: 18px;
+            margin-bottom: 24px;
+        }
+
+        .business-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .contact-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            font-size: 1rem;
+        }
+
+        .contact-detail-item i {
+            width: 28px;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .services-list {
+            margin: 20px 0 20px;
+            list-style: none;
+        }
+
+        .services-list li {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .services-list li i {
+            color: var(--primary);
+            width: 24px;
+        }
+
+        .social-links-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 24px 0 16px;
+        }
+
+        .social-links-inline a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #111;
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .social-links-inline a i {
+            font-size: 1rem;
+        }
+
+        .social-links-inline a.tiktok { background: #010101; }
+        .social-links-inline a.facebook { background: #1877F2; }
+        .social-links-inline a.instagram { background: #E4405F; }
+        .social-links-inline a.youtube { background: #FF0000; }
+
+        .social-links-inline a:hover {
+            filter: brightness(0.85);
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--black);
+            color: white;
+            text-decoration: none;
+            padding: 12px 22px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .action-btn.whatsapp { background: #25D366; }
+        .action-btn.call { background: var(--primary); }
+        .action-btn.email { background: #2c2c2c; }
+
+        .action-btn:hover {
+            filter: brightness(0.9);
+            transform: translateY(-1px);
+        }
+
+        /* AI fixed button & modal (same as main) */
+        .ai-fixed-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--primary);
+            color: white;
+            width: auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            z-index: 1200;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .ai-fixed-btn i {
+            font-size: 1.3rem;
+        }
+
+        .ai-fixed-btn:hover {
+            background: #2c6e9e;
+            transform: scale(1.02);
+        }
+
+        .ai-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
+        }
+
+        .ai-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .ai-modal-container {
+            width: 90%;
+            max-width: 1000px;
+            height: 85vh;
+            max-height: 750px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: #4397D3;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-modal-x {
+            background: #4397D3;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+
+        .chat-messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            background: #fafafc;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            word-break: break-word;
+            background: white;
+            border: 1px solid #e2e2e2;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: #4397D3;
+            color: white;
+            border: none;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: white;
+            border-left: 3px solid #4397D3;
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            background: #ececec;
+            padding: 10px 16px;
+            font-style: italic;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 16px 20px;
+            background: white;
+            border-top: 1px solid #ddd;
+            gap: 12px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ccc;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background: var(--black);
+            color: white;
+            border: none;
+            padding: 0 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .chat-input-area button:hover {
+            background: var(--primary);
+        }
+
+        footer {
+            background: #000000;
+            color: #aaa;
+            padding: 38px 5% 28px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-logo img {
+            height: 42px;
+            filter: brightness(0.8);
+            margin-bottom: 16px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin: 20px 0 18px;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            color: #dddddd;
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            font-size: 0.7rem;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+            header {
+                padding: 12px 4%;
+            }
+            .logo-container img {
+                height: 40px;
+            }
+            .dropdown-trigger {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+            .dropdown-menu {
+                width: 300px;
+                height: 450px;
+                right: 0;
+            }
+            .location-hero {
+                padding: 110px 4% 30px;
+            }
+            .location-hero h1 {
+                font-size: 1.8rem;
+            }
+            .map-wrapper iframe {
+                height: 320px;
+            }
+            .info-card {
+                padding: 20px;
+            }
+            .business-name {
+                font-size: 1.5rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-btn {
+                justify-content: center;
+            }
+            .social-links-inline {
+                gap: 12px;
+            }
+            .social-links-inline a {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dropdown-menu {
+                width: 280px;
+                height: 420px;
+                right: -10px;
+            }
+            .info-card h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img src="ch.png" alt="Chef Kyegonza Logo">
+    </div>
+    <div class="dropdown-container">
+        <button class="dropdown-trigger no-radius" id="dropdownBtn">
+            <span>MENU</span>
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
+            <a href="contact.html"><i class="fas fa-envelope-open-text"></i> Contact</a>
+            <a href="#" id="talkToAgentLink"><i class="fas fa-comment-dots"></i> Talk to Agent</a>
+            <a href="location.html"><i class="fas fa-map-marker-alt"></i> Location</a>
+        </div>
+    </div>
+</header>
+
+<section class="location-hero">
+    <h1>Our <span class="highlight">Location</span></h1>
+    <p>Visit us in Kampala, or let Chef Kyegonza bring authentic Ugandan flavors to your doorstep.</p>
+</section>
+
+<div class="location-container">
+    <!-- Google Map Embed -->
+    <div class="map-wrapper">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255123.555891355!2d32.48271924185768!3d0.347596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbbf7d7f7d7f7%3A0x7f7f7f7f7f7f7f7f!2sKampala%2C%20Uganda!5e0!3m2!1sen!2sug!4v1710000000000!5m2!1sen!2sug" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+
+    <!-- Business Info Card -->
+    <div class="info-card">
+        <div class="business-name">Chef Kyegonza</div>
+        
+        <div class="contact-detail-item">
+            <i class="fas fa-phone-alt"></i>
+            <span><strong>Phone:</strong> 0702 586485 / +256 702 586485</span>
+        </div>
+        <div class="contact-detail-item">
+            <i class="fas fa-envelope"></i>
+            <span><strong>Email:</strong> kyegonzajoshua@gmail.com</span>
+        </div>
+        <div class="contact-detail-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span><strong>Location:</strong> Kampala, Uganda (services available nationwide)</span>
+        </div>
+
+        <h2 style="margin-top: 28px; font-size: 1.3rem;">Services</h2>
+        <ul class="services-list">
+            <li><i class="fas fa-utensils"></i> Private Chef & Fine Dining</li>
+            <li><i class="fas fa-church"></i> Mikolo / Traditional Ceremonies</li>
+            <li><i class="fas fa-truck"></i> Outside Catering (Corporate & Weddings)</li>
+            <li><i class="fas fa-pizza-slice"></i> Custom Menus & Event Planning</li>
+        </ul>
+
+        <h2 style="margin-top: 20px; font-size: 1.3rem;">Follow Chef Kyegonza</h2>
+        <div class="social-links-inline">
+            <a href="https://www.tiktok.com/@chefkyegonza" target="_blank" class="tiktok no-radius"><i class="fab fa-tiktok"></i> TikTok</a>
+            <a href="https://www.facebook.com/kyegonzas" target="_blank" class="facebook no-radius"><i class="fab fa-facebook-f"></i> Facebook</a>
+            <a href="https://www.instagram.com/chefkyegonza" target="_blank" class="instagram no-radius"><i class="fab fa-instagram"></i> Instagram</a>
+            <a href="https://www.youtube.com/@chefkyegonza" target="_blank" class="youtube no-radius"><i class="fab fa-youtube"></i> YouTube</a>
+        </div>
+
+        <div class="action-buttons">
+            <a href="https://wa.me/256702586485" class="action-btn whatsapp no-radius" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="tel:+256702586485" class="action-btn call no-radius"><i class="fas fa-phone-alt"></i> Call Now</a>
+            <a href="mailto:kyegonzajoshua@gmail.com" class="action-btn email no-radius"><i class="fas fa-envelope"></i> Email Us</a>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Button + Modal (same as main page) -->
+<button class="ai-fixed-btn no-radius" id="aiChatTrigger">
+    <i class="fas fa-comment-dots"></i> Talk to Chef Kyegonza
+</button>
+
+<div id="aiModalOverlay" class="ai-modal-overlay">
+    <div class="ai-modal-container">
+        <div class="modal-header">
+            <h3>Chef Kyegonza</h3>
+            <button class="close-modal-x" id="closeModalBtn">✕</button>
+        </div>
+        <div class="chat-messages-area" id="chatMessagesContainer">
+            <div class="message-bubble bot-message">
+                Hello, this is Chef Kyegonza. How can I help with your catering, private dining, or location inquiries?
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Ask about menus, events, booking..." autocomplete="off">
+            <button id="sendChatBtn">Send</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-logo"><img src="ch.png" alt="Chef Kyegonza Logo"></div>
+    <div class="social-links">
+        <a href="https://www.tiktok.com/@chefkyegonza" target="_blank">TikTok</a>
+        <a href="https://www.instagram.com/chefkyegonza" target="_blank">Instagram</a>
+        <a href="https://www.facebook.com/kyegonzas" target="_blank">Facebook</a>
+        <a href="https://www.youtube.com/@chefkyegonza" target="_blank">YouTube</a>
+    </div>
+    <p class="copyright">&copy; 2026 Chef Kyegonza Meals — Professional Catering Services Uganda</p>
+</footer>
+
+<script>
+    (function() {
+        // Dropdown toggle
+        const dropdownBtn = document.getElementById('dropdownBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            document.addEventListener('click', function(event) {
+                if (!dropdownBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        }
+
+        // Talk to Agent opens AI modal
+        const talkToAgentLink = document.getElementById('talkToAgentLink');
+        const aiModalOverlay = document.getElementById('aiModalOverlay');
+        const aiTriggerBtn = document.getElementById('aiChatTrigger');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        function openAIModal() {
+            if (aiModalOverlay) aiModalOverlay.classList.add('active');
+            setTimeout(() => {
+                const input = document.getElementById('chatInput');
+                if (input) input.focus();
+            }, 200);
+        }
+
+        if (talkToAgentLink) {
+            talkToAgentLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openAIModal();
+                dropdownMenu.classList.remove('show');
+            });
+        }
+        if (aiTriggerBtn) aiTriggerBtn.addEventListener('click', openAIModal);
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                aiModalOverlay.classList.remove('active');
+            });
+        }
+        if (aiModalOverlay) {
+            aiModalOverlay.addEventListener('click', (e) => {
+                if (e.target === aiModalOverlay) aiModalOverlay.classList.remove('active');
+            });
+        }
+
+        // ---------- AI Chat with Puter.js ----------
+        const chatContainer = document.getElementById('chatMessagesContainer');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendChatBtn');
+
+        let conversationHistory = [
+            { role: "system", content: "You are Chef Kyegonza, a renowned Ugandan private chef and caterer. You are friendly, professional, and an expert in traditional cuisine, Mikolo events, and private dining. Never mention that you are an AI, a language model, or a robot. Do not use any emojis in your replies. Keep answers warm but concise, helpful and authentic. Your name is Chef Kyegonza." }
+        ];
+        let isLoading = false;
+
+        function addMessageToUI(text, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-bubble ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerText = text;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message-bubble bot-message typing-indicator';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerText = 'Chef Kyegonza is responding...';
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        async function getChefResponse(userMessage) {
+            conversationHistory.push({ role: "user", content: userMessage });
+            try {
+                if (typeof window.puter !== 'undefined' && window.puter.ai && typeof window.puter.ai.chat === 'function') {
+                    const response = await window.puter.ai.chat(conversationHistory, { stream: false });
+                    let replyText = response.message?.content || response?.content || "I didn't get that. Could you rephrase?";
+                    return replyText;
+                } else {
+                    return simulateChefReply(userMessage);
+                }
+            } catch (err) {
+                console.error("Puter error:", err);
+                return simulateChefReply(userMessage);
+            }
+        }
+
+        function simulateChefReply(userMsg) {
+            const lowerMsg = userMsg.toLowerCase();
+            if (lowerMsg.includes('menu') || lowerMsg.includes('food')) {
+                return "Our menu includes traditional Ugandan dishes: Luwombo, Pilau, goat meat, fresh fish, and much more. I also offer tailored catering for private events. Which dish are you curious about?";
+            } else if (lowerMsg.includes('catering') || lowerMsg.includes('mikolo')) {
+                return "I provide full-service outside catering for Mikolo ceremonies, weddings, and corporate functions. Pricing depends on guest count and menu selection. Let's discuss your event details.";
+            } else if (lowerMsg.includes('price') || lowerMsg.includes('cost')) {
+                return "Pricing varies from 5,000 UGX for snacks to full premium platters. A typical private dinner starts from 35,000 UGX per person. For accurate quote, share your event size.";
+            } else if (lowerMsg.includes('contact') || lowerMsg.includes('call') || lowerMsg.includes('location')) {
+                return "You can reach me directly at +256 702 586 485, email kyegonzajoshua@gmail.com, or visit our Kampala location. I reply promptly.";
+            } else {
+                return "Thank you for reaching out. I'm Chef Kyegonza, and I'd be glad to help with your culinary needs. Could you tell me more about your event or preferred cuisine?";
+            }
+        }
+
+        async function sendUserMessage() {
+            if (isLoading) return;
+            const message = chatInput.value.trim();
+            if (!message) return;
+            addMessageToUI(message, true);
+            chatInput.value = '';
+            isLoading = true;
+            showTypingIndicator();
+            try {
+                const aiReply = await getChefResponse(message);
+                const cleanReply = aiReply.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+                removeTypingIndicator();
+                addMessageToUI(cleanReply, false);
+                conversationHistory.push({ role: "assistant", content: cleanReply });
+                if (conversationHistory.length > 20) {
+                    conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-18)];
+                }
+            } catch (err) {
+                removeTypingIndicator();
+                addMessageToUI("Apologies, I'm having a bit of trouble. Please call me directly or try again.", false);
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        if (sendBtn && chatInput) {
+            sendBtn.addEventListener('click', sendUserMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendUserMessage();
+            });
+        }
+
+        // Strip any emojis from body (extra)
+        function stripEmojis(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.textContent = node.textContent.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+            } else if (node.nodeType === Node.ELEMENT_NODE && !['SCRIPT','STYLE'].includes(node.tagName)) {
+                node.childNodes.forEach(stripEmojis);
+            }
+        }
+        stripEmojis(document.body);
+    })();
+</script>
+</body>
+</html>
