@@ -1,0 +1,243 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Services & Catalog | Chef Kyegonza</title>
+  <link rel="icon" href="ch.png" type="image/x-icon">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background-color: #fefcf8; color: #1e1e1e; scroll-behavior: smooth; overflow-x: hidden; }
+    h1, h2, h3, h4, .serif-heading { font-family: 'Playfair Display', serif; }
+
+    .glass-nav { background: rgba(255, 253, 248, 0.96); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(74, 4, 4, 0.1); }
+    
+    /* Dropdown Logic */
+    .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border-radius: 1rem; box-shadow: 0 25px 40px -10px rgba(0,0,0,0.2); min-width: 220px; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; border: 1px solid #f0e6e0; transform: translateY(15px); }
+    .dropdown:hover .dropdown-menu, .mobile-menu-active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .dropdown-link { display: flex; align-items: center; gap: 12px; padding: 15px 22px; color: #2d2d2d; font-size: 0.85rem; font-weight: 600; transition: 0.2s; text-decoration: none; border-bottom: 1px solid #f9f4f1; }
+    .dropdown-link:last-child { border-bottom: none; }
+    .dropdown-link:hover { background: #4a0404; color: white; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.9s ease-out forwards; }
+    
+    .category-sidebar-link { transition: all 0.3s ease; border-left: 4px solid transparent; }
+    .category-sidebar-link.active { border-left-color: #4a0404; background: #fff8f8; color: #4a0404; font-weight: 700; box-shadow: inset 0 0 10px rgba(74,4,4,0.02); }
+
+    .item-card { background: white; border-radius: 1.5rem; transition: all 0.4s ease; border: 1px solid rgba(0,0,0,0.05); }
+    .item-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -15px rgba(74, 4, 4, 0.12); border-color: #b28950; }
+
+    .bg-pattern { background-image: radial-gradient(#4a0404 0.5px, transparent 0.5px); background-size: 20px 20px; opacity: 0.05; }
+    
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease-out; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    .food-grid-card { background: white; border-radius: 1.5rem; overflow: hidden; transition: all 0.3s ease; border: 1px solid #f1ebe5; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+    .food-grid-card:hover { transform: translateY(-6px); box-shadow: 0 20px 30px -12px rgba(74,4,4,0.1); border-color: #b28950; }
+    .food-img { height: 200px; width: 100%; object-fit: cover; transition: 0.5s ease; }
+    .food-grid-card:hover .food-img { transform: scale(1.03); }
+  </style>
+</head>
+<body>
+
+<nav class="glass-nav fixed top-0 w-full z-[1000] px-6 py-4">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <a href="index.html" class="flex items-center gap-4">
+      <img src="ch.png" alt="Chef Kyegonza" class="w-12 h-12 bg-white rounded-full p-1 shadow-md">
+      <div class="hidden sm:block">
+        <h1 class="text-2xl font-bold text-[#4a0404]">Chef Kyegonza</h1>
+        <p class="text-[9px] uppercase tracking-[0.3em] text-stone-500 font-bold">Premium Catering & Services</p>
+      </div>
+    </a>
+
+    <div class="flex items-center gap-10">
+      <div class="hidden lg:flex items-center gap-10">
+        <a href="index.html" class="text-[11px] font-black uppercase tracking-widest text-stone-600 hover:text-[#4a0404] transition">Home</a>
+        <a href="#catering" class="text-[11px] font-black uppercase tracking-widest text-stone-600 hover:text-[#4a0404] transition">Catering</a>
+        <a href="#pizza" class="text-[11px] font-black uppercase tracking-widest text-stone-600 hover:text-[#4a0404] transition">Pizza</a>
+      </div>
+      
+      <div class="relative dropdown" id="navDropdown">
+        <button id="menuTrigger" class="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-[#4a0404] bg-[#4a0404]/5 px-4 py-2 rounded-full lg:px-6 lg:py-3 transition hover:bg-[#4a0404]/10">
+          <i class="fas fa-bars-staggered lg:hidden text-xl"></i>
+          <span class="hidden lg:inline">Navigation</span> 
+          <i class="fas fa-chevron-down text-[9px] hidden lg:inline"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="index.html" class="dropdown-link"><i class="fas fa-house-chimney w-5 text-[#4a0404]"></i> Home</a>
+          <a href="contact.html" class="dropdown-link"><i class="fas fa-paper-plane w-5 text-[#4a0404]"></i> Contact</a>
+          <a href="location.html" class="dropdown-link"><i class="fas fa-location-dot w-5 text-[#4a0404]"></i> Location</a>
+          <hr class="border-stone-100">
+          <a href="tel:+256702586485" class="dropdown-link text-green-600"><i class="fas fa-phone-volume w-5"></i> Call Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="bg-[#4a0404] pt-48 pb-32 px-6 text-center text-white relative overflow-hidden">
+  <div class="absolute inset-0 bg-pattern"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#b28950]/20 blur-[120px] rounded-full"></div>
+  
+  <div class="relative z-10 max-w-5xl mx-auto animate-up">
+    <span class="inline-block px-6 py-2 border border-[#b28950]/40 text-[#b28950] text-[11px] font-black uppercase tracking-[0.5em] rounded-full mb-8">Service Catalog & Full Menu</span>
+    <h1 class="text-5xl md:text-8xl font-serif mb-8 leading-[1.1]">Elite Standards.<br><span class="italic font-light text-[#b28950]">Every Occasion.</span></h1>
+  </div>
+</header>
+
+<div class="max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-12 gap-16">
+  
+  <aside class="lg:col-span-3">
+    <div class="sticky top-32 space-y-3">
+      <h3 class="text-[10px] font-black text-stone-400 uppercase tracking-[0.3em] mb-6 ml-6">Menu Sections</h3>
+      <a href="#catering" class="category-sidebar-link active flex items-center gap-5 px-8 py-5 rounded-2xl text-xs font-bold uppercase tracking-widest">
+        <i class="fas fa-hand-holding-heart w-5 text-center"></i> Catering
+      </a>
+      <a href="#pizza" class="category-sidebar-link flex items-center gap-5 px-8 py-5 rounded-2xl text-xs font-bold uppercase tracking-widest">
+        <i class="fas fa-pizza-slice w-5 text-center"></i> Pizza
+      </a>
+      <a href="#local" class="category-sidebar-link flex items-center gap-5 px-8 py-5 rounded-2xl text-xs font-bold uppercase tracking-widest">
+        <i class="fas fa-shrine w-5 text-center"></i> Local Food
+      </a>
+      <a href="#snacks" class="category-sidebar-link flex items-center gap-5 px-8 py-5 rounded-2xl text-xs font-bold uppercase tracking-widest">
+        <i class="fas fa-box-open w-5 text-center"></i> Snacks
+      </a>
+    </div>
+  </aside>
+
+  <div class="lg:col-span-9 space-y-32">
+    
+    <section id="catering" class="reveal">
+      <div class="flex flex-col mb-12">
+        <span class="text-[#b28950] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Outside Catering</span>
+        <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#4a0404]">Traditional & Modern Events</h2>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="item-card p-10 relative overflow-hidden group">
+          <div class="relative z-10">
+            <h3 class="text-2xl font-bold mb-3">Kukyala & Kwanjula</h3>
+            <p class="text-sm text-stone-500 leading-relaxed mb-8">Authentic Buganda cuisine and expert food display for traditional ceremonies.</p>
+            <button onclick="book('Kwanjula Package')" class="w-full py-4 bg-[#4a0404] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#b28950] transition">Reserve Date</button>
+          </div>
+        </div>
+        <div class="item-card p-10 relative overflow-hidden group">
+          <div class="relative z-10">
+            <h3 class="text-2xl font-bold mb-3">Birthday & Private</h3>
+            <p class="text-sm text-stone-500 leading-relaxed mb-8">Intimate gatherings with custom multi-course menus and luxury desserts.</p>
+            <button onclick="book('Birthday Package')" class="w-full py-4 border-2 border-[#4a0404] text-[#4a0404] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#4a0404] hover:text-white transition">Get Quote</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pizza" class="reveal">
+      <div class="flex flex-col mb-12">
+        <span class="text-[#b28950] text-[10px] font-black uppercase tracking-[0.4em] mb-2">Artisan Oven</span>
+        <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#4a0404]">The Pizza Selection</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="item-card group overflow-hidden border-none shadow-xl">
+          <div class="h-60 overflow-hidden relative">
+            <img src="chicken.jpg" alt="Chicken Pizza" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110">
+          </div>
+          <div class="p-8 text-center bg-white">
+            <h4 class="text-xl font-bold mb-2">Chicken Pizza</h4>
+            <button onclick="order('Chicken Pizza')" class="w-full py-3 bg-[#4a0404] text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-[#b28950] transition">Contact & Order</button>
+          </div>
+        </div>
+        <div class="item-card group overflow-hidden border-none shadow-xl">
+          <div class="h-60 overflow-hidden relative">
+            <img src="beef.jpg" alt="Beef Pizza" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110">
+          </div>
+          <div class="p-8 text-center bg-white">
+            <h4 class="text-xl font-bold mb-2">Beef Pizza</h4>
+            <button onclick="order('Beef Pizza')" class="w-full py-3 bg-[#4a0404] text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-[#b28950] transition">Contact & Order</button>
+          </div>
+        </div>
+        <div class="item-card group overflow-hidden border-none shadow-xl">
+          <div class="h-60 overflow-hidden relative">
+            <img src="veg.jpg" alt="Vegetable Pizza" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110">
+          </div>
+          <div class="p-8 text-center bg-white">
+            <h4 class="text-xl font-bold mb-2">Vegetable Pizza</h4>
+            <button onclick="order('Vegetable Pizza')" class="w-full py-3 bg-[#4a0404] text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-[#b28950] transition">Contact & Order</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="local" class="reveal">
+      <div class="flex flex-col mb-12">
+        <span class="text-[#b28950] text-[10px] font-black uppercase tracking-[0.4em] mb-2">The Motherland</span>
+        <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#4a0404]">Ugandan Local Food</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+        <div class="food-grid-card"><img class="food-img" src="bean.jpg" alt="Beans Stew"><div class="p-5 text-center"><h4 class="font-bold text-lg">Beans Stew</h4><button onclick="order('Beans Stew')" class="mt-4 w-full py-2.5 border border-[#4a0404] text-[#4a0404] rounded-full text-[10px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Inquire</button></div></div>
+        <div class="food-grid-card"><img class="food-img" src="chicken.jpg" alt="Chicken Stew"><div class="p-5 text-center"><h4 class="font-bold text-lg">Chicken Stew</h4><button onclick="order('Chicken Stew')" class="mt-4 w-full py-2.5 border border-[#4a0404] text-[#4a0404] rounded-full text-[10px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Inquire</button></div></div>
+        <div class="food-grid-card"><img class="food-img" src="stew.jpg" alt="Meat Stew"><div class="p-5 text-center"><h4 class="font-bold text-lg">Meat Stew</h4><button onclick="order('Meat Stew')" class="mt-4 w-full py-2.5 border border-[#4a0404] text-[#4a0404] rounded-full text-[10px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Inquire</button></div></div>
+        <div class="food-grid-card"><img class="food-img" src="fish.jpg" alt="Fish Stew"><div class="p-5 text-center"><h4 class="font-bold text-lg">Fish Stew</h4><button onclick="order('Fish Stew')" class="mt-4 w-full py-2.5 border border-[#4a0404] text-[#4a0404] rounded-full text-[10px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Inquire</button></div></div>
+        <div class="food-grid-card"><img class="food-img" src="goat.jpg" alt="Goat Meat Stew"><div class="p-5 text-center"><h4 class="font-bold text-lg">Goat Meat Stew</h4><button onclick="order('Goat Meat Stew')" class="mt-4 w-full py-2.5 border border-[#4a0404] text-[#4a0404] rounded-full text-[10px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Inquire</button></div></div>
+      </div>
+    </section>
+
+    <section id="snacks" class="reveal pb-24">
+      <div class="flex flex-col mb-12">
+        <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#4a0404]">Snacks & Pastries</h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="food-grid-card"><img class="food-img h-44" src="pan.jpg" alt="Pan Cakes"><div class="p-4 text-center"><h4 class="font-bold text-md">Pan Cakes</h4><button onclick="order('Pan Cakes')" class="mt-3 w-full py-2 bg-stone-100 text-[#4a0404] rounded-full text-[9px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Order</button></div></div>
+        <div class="food-grid-card"><img class="food-img h-44" src="sau.jpg" alt="Sausages"><div class="p-4 text-center"><h4 class="font-bold text-md">Sausages</h4><button onclick="order('Sausages')" class="mt-3 w-full py-2 bg-stone-100 text-[#4a0404] rounded-full text-[9px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Order</button></div></div>
+        <div class="food-grid-card"><img class="food-img h-44" src="man.jpg" alt="Mandazi"><div class="p-4 text-center"><h4 class="font-bold text-md">Mandazi</h4><button onclick="order('Mandazi')" class="mt-3 w-full py-2 bg-stone-100 text-[#4a0404] rounded-full text-[9px] font-black uppercase hover:bg-[#4a0404] hover:text-white transition">Order</button></div></div><ul style=" list-style-type:squre ;">
+  <li>Pies</li><li>G-nut plain</li><li>Pasted fish</li>
+</ul>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<footer class="bg-[#0f0f0f] pt-24 pb-12 text-white border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-16">
+    <div>
+      <h3 class="text-3xl font-serif font-bold mb-4">Chef Kyegonza</h3>
+      <p class="text-stone-500 text-sm">"Culinary excellence is a journey of tradition."</p>
+    </div>
+    <div>
+      <h4 class="text-[#b28950] font-black text-[10px] uppercase mb-8">Contact</h4>
+      <p class="text-sm text-stone-300">+256 702 586 485</p>
+      <p class="text-sm text-stone-300">kyegonzajoshua@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reveal animations
+  function revealOnScroll() { const reveals = document.querySelectorAll(".reveal"); reveals.forEach(el => { const windowHeight = window.innerHeight; const elementTop = el.getBoundingClientRect().top; if (elementTop < windowHeight - 100) el.classList.add("active"); }); }
+  window.addEventListener("scroll", revealOnScroll); revealOnScroll();
+
+  // Mobile/Desktop Dropdown Animation
+  const menuTrigger = document.getElementById('menuTrigger');
+  const navDropdown = document.getElementById('navDropdown');
+  
+  menuTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navDropdown.classList.toggle('mobile-menu-active');
+  });
+
+  document.addEventListener('click', () => {
+    navDropdown.classList.remove('mobile-menu-active');
+  });
+
+  function order(item) { window.open(`https://wa.me/256702586485?text=${encodeURIComponent(`Hello Chef Kyegonza, I'd like to order ${item}.`)}`, '_blank'); }
+  function book(pkg) { window.open(`https://wa.me/256702586485?text=${encodeURIComponent(`Hello Chef Kyegonza, I'm interested in the ${pkg}.`)}`, '_blank'); }
+</script>
+
+</body>
+</html>
