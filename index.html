@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Chef Kyegonza | Premium Catering & Mikolo Services</title>
+  <link rel="icon" href="ch.png" type="image/x-icon">
+  <meta name="description" content="Chef Kyegonza - Private Chef, Outside Catering, Mikolo Services in Uganda. Authentic cuisine with modern touch.">
+
+  <!-- Tailwind + Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Clean modern fonts: Inter + Playfair Display -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background-color: #fefcf8; color: #1e1e1e; scroll-behavior: smooth; }
+    h1, h2, h3, .serif-heading { font-family: 'Playfair Display', serif; }
+    .glass-nav { background: rgba(255, 253, 248, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(74, 4, 4, 0.1); }
+    
+    /* CREATIVE HOVER EFFECT FOR CATEGORY CARDS + CLICK REDIRECT */
+    .category-card {
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      border-radius: 1.5rem;
+      background: white;
+    }
+    .category-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      background: #fffaf5;
+      box-shadow: 0 20px 30px -12px rgba(74, 4, 4, 0.2);
+      border-color: #b28950 !important;
+    }
+    .category-card:hover .category-icon {
+      background-color: #4a0404 !important;
+      color: white !important;
+      transform: rotate(3deg) scale(1.05);
+      transition: all 0.2s ease;
+    }
+    
+    .menu-card { background: white; border-radius: 1.5rem; overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 8px 20px rgba(0,0,0,0.02); }
+    .menu-card:hover { transform: translateY(-6px); box-shadow: 0 20px 35px -12px rgba(74,4,4,0.15); border-color: rgba(74,4,4,0.2); }
+    
+    .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border-radius: 1rem; box-shadow: 0 20px 35px -8px rgba(0,0,0,0.15); min-width: 180px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 200; border: 1px solid #f0e6e0; }
+    .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(8px); }
+    .dropdown-link { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #2d2d2d; font-size: 0.9rem; font-weight: 500; transition: 0.2s; text-decoration: none; }
+    .dropdown-link:hover { background: #4a0404; color: white; }
+    .price-tab-active { background-color: #4a0404; color: white; box-shadow: 0 6px 14px rgba(0,0,0,0.1); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-slide { animation: fadeSlide 0.4s ease forwards; }
+    .whatsapp-btn { background-color: #25D366; color: white; padding: 8px 16px; border-radius: 40px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; border: none; cursor: pointer; margin-top: 12px; width: 100%; justify-content: center; }
+    .whatsapp-btn:hover { background-color: #128C7E; transform: scale(1.02); }
+    .spinner-border { width: 48px; height: 48px; border: 4px solid #f0e6e0; border-top: 4px solid #4a0404; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- MAIN NAVIGATION (GLASS) -->
+<nav class="glass-nav fixed top-0 w-full z-[1000] px-5 py-3 md:px-8 transition-all duration-200">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <a href="#" class="flex items-center gap-3 group">
+      <div class="p-1 bg-white rounded-full shadow-md group-hover:rotate-6 transition-transform">
+        <img src="ch.png" alt="Chef Kyegonza" class="w-10 h-10 object-contain">
+      </div>
+      <div class="hidden sm:block">
+        <h1 class="text-xl font-bold tracking-tight text-[#4a0404]">Chef Kyegonza</h1>
+        <p class="text-[9px] uppercase tracking-[0.25em] font-semibold text-stone-500">Elite Catering & Mikolo Specialist</p>
+      </div>
+    </a>
+
+    <div class="flex-1 max-w-sm mx-5 hidden lg:block relative">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
+      <input type="text" id="searchInput" placeholder="Search dishes..." class="w-full pl-10 pr-4 py-2.5 rounded-full border border-stone-200 bg-white/80 focus:border-[#4a0404] focus:ring-1 focus:ring-[#4a0404] outline-none transition text-sm">
+    </div>
+
+    <div class="hidden md:flex items-center gap-7">
+      <a href="#categories" class="text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">Categories</a>
+      <a href="#featured" class="text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">Menu</a>
+      <a href="#pricelist" class="text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">Price list</a>
+      <div class="relative dropdown">
+        <button class="flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">
+          Pages <i class="fas fa-chevron-down text-[10px]"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="contact.html" class="dropdown-link"><i class="fas fa-envelope w-5"></i> Contact</a>
+          <a href="location.html" class="dropdown-link"><i class="fas fa-map-marker-alt w-5"></i> Location</a>
+          <a href="#" class="dropdown-link" id="fullMenuLink"><i class="fas fa-utensils w-5"></i> Full Menu</a>
+        </div>
+      </div>
+      <button id="cartHeaderBtn" class="relative w-10 h-10 rounded-full bg-[#4a0404] text-white flex items-center justify-center shadow-md hover:scale-105 transition">
+        <i class="fas fa-shopping-bag"></i>
+        <span id="cartBadge" class="absolute -top-1 -right-1 bg-[#b28950] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+    </div>
+
+    <button id="mobileMenuBtn" class="md:hidden text-2xl text-[#4a0404]"><i class="fas fa-bars-staggered"></i></button>
+  </div>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div id="mobileDrawer" class="fixed inset-0 bg-black/50 z-[2000] opacity-0 invisible transition-all duration-300">
+  <div class="absolute right-0 top-0 h-full w-[85%] max-w-xs bg-white p-6 translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex justify-between items-center mb-8">
+      <img src="ch.png" class="w-12 h-12" alt="Logo">
+      <button id="closeDrawerBtn" class="text-3xl">&times;</button>
+    </div>
+    <nav class="flex flex-col gap-6 text-base font-semibold">
+      <a href="#" class="flex items-center gap-3 text-[#4a0404]"><i class="fas fa-home w-6"></i> Home</a>
+      <a href="#categories" class="flex items-center gap-3"><i class="fas fa-grid-2 w-6"></i> Categories</a>
+      <a href="#featured" class="flex items-center gap-3"><i class="fas fa-utensils w-6"></i> Our Menu</a>
+      <a href="contact.html" class="flex items-center gap-3"><i class="fas fa-envelope w-6"></i> Contact</a>
+      <a href="location.html" class="flex items-center gap-3"><i class="fas fa-map-marker-alt w-6"></i> Location</a>
+      <a href="#" class="flex items-center gap-3" id="mobileFullMenu"><i class="fas fa-list-ul w-6"></i> Full Menu</a>
+      <a href="tel:+256702586485" class="flex items-center gap-3"><i class="fas fa-phone w-6"></i> Call Chef</a>
+    </nav>
+    <div class="mt-10 pt-6 border-t border-stone-100">
+      <p class="text-[10px] uppercase tracking-wider text-stone-400 mb-3">Follow</p>
+      <div class="flex gap-4"><a href="#" class="w-9 h-9 bg-stone-100 rounded-full flex items-center justify-center"><i class="fab fa-instagram"></i></a><a href="#" class="w-9 h-9 bg-stone-100 rounded-full flex items-center justify-center"><i class="fab fa-whatsapp text-green-600"></i></a></div>
+    </div>
+  </div>
+</div>
+
+<main class="pt-28 md:pt-32">
+  <!-- Hero Section -->
+  <section class="px-5 md:px-8 max-w-7xl mx-auto mb-20">
+    <div class="relative h-[480px] md:h-[580px] rounded-[2rem] overflow-hidden shadow-2xl">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent z-10"></div>
+      <div class="relative z-20 h-full flex flex-col justify-center px-6 md:px-12 max-w-xl">
+        <span class="inline-block px-4 py-1.5 bg-[#b28950] text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-full mb-5">Chef Kyegonza • Mikolo Specialist</span>
+        <h2 class="text-4xl md:text-6xl  text-white leading-tight mb-6">Let's Meet <span class="text-[#b28950]">Artistry</span></h2>
+        <p class="text-white/90 text-lg mb-5">Private Chef • Outside Catering • Authentic Mikolo & Continental Cuisine</p>
+        <div class="flex flex-wrap gap-4">
+          <a href="contact.html" class="bg-white text-[#4a0404] px-7 py-3 rounded-full font-bold shadow-lg hover:bg-[#b28950] hover:text-white transition"><i class="fas fa-utensils mr-2"></i> Request a Chef</a>
+          <a href="#featured" class="backdrop-blur-sm border border-white/40 text-white px-7 py-3 rounded-full font-bold hover:bg-white/10 transition">Explore Menu</a>
+        </div>
+      </div>
+      <div class="absolute inset-0"><img src="food1.jpg" class="w-full h-full object-cover" alt="Chef Kyegonza signature dish"></div>
+    </div>
+  </section>
+
+  <!-- Categories (Explore by Chef’s Specialties) - EACH BOX CLICKABLE TO more.html + CREATIVE HOVER -->
+  <section id="categories" class="px-5 md:px-8 max-w-7xl mx-auto mb-20">
+    <div class="flex justify-between items-end mb-8"><div><h3 class="text-2xl md:text-3xl font-serif font-bold text-gray-800">Explore by Chef’s Specialties</h3><p class="text-sm text-stone-500 mt-1">Curated by Chef Kyegonza</p></div><a href="#" class="text-[#4a0404] font-semibold text-sm underline flex items-center gap-1">All <i class="fas fa-arrow-right text-xs"></i></a></div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+      <div class="category-card bg-white p-5 rounded-2xl text-center shadow-sm border" data-cat="chips"><div class="category-icon w-14 h-14 rounded-xl bg-amber-50 text-[#4a0404] flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-burger"></i></div><h4 class="font-bold text-sm">Chips & Meals</h4><p class="text-[10px] text-stone-400">12 items</p></div>
+      <div class="category-card bg-white p-5 rounded-2xl text-center shadow-sm border" data-cat="chicken"><div class="category-icon w-14 h-14 rounded-xl bg-red-50 text-[#4a0404] flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-drumstick-bite"></i></div><h4 class="font-bold text-sm">Chicken</h4><p class="text-[10px] text-stone-400">8 items</p></div>
+      <div class="category-card bg-white p-5 rounded-2xl text-center shadow-sm border" data-cat="pizza"><div class="category-icon w-14 h-14 rounded-xl bg-yellow-50 text-[#4a0404] flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-pizza-slice"></i></div><h4 class="font-bold text-sm">Pizza</h4><p class="text-[10px] text-stone-400">5 items</p></div>
+      <div class="category-card bg-white p-5 rounded-2xl text-center shadow-sm border" data-cat="local"><div class="category-icon w-14 h-14 rounded-xl bg-green-50 text-[#4a0404] flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-leaf"></i></div><h4 class="font-bold text-sm">Local Food</h4><p class="text-[10px] text-stone-400">15 items</p></div>
+      <div class="category-card bg-white p-5 rounded-2xl text-center shadow-sm border" data-cat="snacks"><div class="category-icon w-14 h-14 rounded-xl bg-blue-50 text-[#4a0404] flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-cookie"></i></div><h4 class="font-bold text-sm">Snacks</h4><p class="text-[10px] text-stone-400">10 items</p></div>
+      <div class="category-card bg-white p-5 rounded-2xl text-center shadow-sm border" data-cat="catering"><div class="category-icon w-14 h-14 rounded-xl bg-purple-50 text-[#4a0404] flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-calendar-star"></i></div><h4 class="font-bold text-sm">Catering</h4><p class="text-[10px] text-stone-400">Full plan</p></div>
+    </div>
+  </section>
+
+  <!-- STATIC FEATURED PRODUCTS (Signature Creations by Chef Kyegonza) -->
+  <section id="featured" class="bg-stone-50/60 py-20 px-5 md:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-[#b28950] text-xs font-bold uppercase tracking-[0.3em]">Chef's Signature</span>
+        <h2 class="text-4xl font-serif text-gray-800 mt-2">Signature Creations by Chef Kyegonza</h2>
+        <p class="text-stone-500 max-w-xl mx-auto mt-2">Handcrafted dishes that define our culinary identity</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- The Royal Beast Burger -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="food1.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Burger"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">The Royal Beast Burger</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">18,000/-</span></div><p class="text-stone-500 text-sm mt-2">Double-patty beef burger with melted cheese, pickles, tomato, and sauce on a sesame bun.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+        <!-- Supreme Grilled Wrap -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="food2.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Wrap"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Supreme Grilled Wrap</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">14,000/-</span></div><p class="text-stone-500 text-sm mt-2">Beef or chicken burrito wrap served with a side of seasoned French fries.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+        <!-- Golden Samosa -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="food3.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Samosa"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Golden Samosa</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">1,000/-</span></div><p class="text-stone-500 text-sm mt-2">Golden-brown fried Samosas garnished with fresh parsley. (per piece)</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+        <!-- Pilau + Chicken Platter - UPDATED PRICE 55,000/- -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="food4.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Pilau"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Pilau + Chicken Platter</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">55,000/-</span></div><p class="text-stone-500 text-sm mt-2">Mixed platter: Pilau rice, French fries, sliced avocado, and beef or chicken stew.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+        <!-- Glazed Chicken Wings - UPDATED PRICE 15,000/- -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="food5.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Wings"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Glazed Chicken Wings</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">15,000/-</span></div><p class="text-stone-500 text-sm mt-2">Glazed chicken wings sautéed with peppers & onions, served with basket of fries.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+        <!-- Chips Plain -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="food6.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Chips"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Chips Plain</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">5,000/-</span></div><p class="text-stone-500 text-sm mt-2">Classic French fries served in a red paper container.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+        <!-- Full Pizza (Signature Creations) -->
+        <div class="menu-card static-product">
+          <div class="relative h-56 overflow-hidden"><img src="pizza.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Full Pizza" onerror="this.src='food1.jpg'"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Full Pizza</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">30,000/-</span></div><p class="text-stone-500 text-sm mt-2">A freshly baked Supreme-style pizza topped with pepperoni, black olives, green bell peppers, and sausage. The golden-brown crust and melted mozzarella cheese create a perfectly</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DYNAMIC FIREBASE SECTION (unchanged) -->
+  <section id="dynamic-section" class="py-20 px-5 md:px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-[#b28950] text-xs font-bold uppercase tracking-[0.3em]">Kitchen Additions</span>
+        <h2 class="text-4xl font-serif text-gray-800 mt-2">Daily Specials by Chef Kyegonza</h2>
+        <p class="text-stone-500 max-w-xl mx-auto mt-2">Fresh inspirations from our creative table</p>
+      </div>
+      <div id="dynamicProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="col-span-full flex justify-center py-12"><div class="spinner-border"></div><span class="ml-3 text-stone-500">Loading specials...</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICE LIST SECTION (unchanged) -->
+  <section id="pricelist" class="bg-[#121212] py-24 px-5 md:px-8 text-white relative">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-14 gap-6">
+        <div><h3 class="text-[#b28950] text-xs font-bold uppercase tracking-[0.4em] mb-3">Official Price List</h3><h2 class="text-3xl md:text-5xl font-serif">Authentic Ugandan & Continental</h2><p class="text-gray-400 text-sm mt-2">Curated by Chef Kyegonza</p></div>
+        <div class="flex p-1 bg-white/10 rounded-full backdrop-blur-sm"><button onclick="togglePriceMenu('local')" id="btnLocal" class="price-tab-active px-7 py-2 rounded-full text-xs font-bold uppercase tracking-wider">Local Food</button><button onclick="togglePriceMenu('continental')" id="btnCont" class="px-7 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-gray-300 hover:text-white">Continental</button></div>
+      </div>
+      <div id="localMenuBlock" class="grid md:grid-cols-2 gap-12">
+        <div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Fish (Chips + Fish)</span><span class="text-[#b28950] font-bold">30,000/-</span></div><p class="text-xs text-gray-400 mt-1">Whole deep-fried fish with lemon & tomatoes</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Pilau + Chicken</span><span class="text-[#b28950] font-bold">15,000/-</span></div><p class="text-xs text-gray-400 mt-1">Spiced rice with chicken stew</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Goat's Meat Stew</span><span class="text-[#b28950] font-bold">15,000/-</span></div></div></div>
+        <div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Mikolo Platter</span><span class="text-[#b28950] font-bold">40,000/-</span></div><p class="text-xs text-gray-400 mt-1">Roasted chicken, sausages, beef skewers, Pilau & fries</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Samosas (per pc)</span><span class="text-[#b28950] font-bold">1,000/-</span></div><p class="text-xs text-gray-400 mt-1">Golden-brown fried Samosas</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Wings + Chips</span><span class="text-[#b28950] font-bold">10,000/-</span></div></div></div>
+      </div>
+      <div id="contMenuBlock" class="hidden grid md:grid-cols-2 gap-12 fade-slide"><div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Full Pizza (Large)</span><span class="text-[#b28950] font-bold">30,000/-</span></div></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Chips + Chicken (L)</span><span class="text-[#b28950] font-bold">18,000/-</span></div></div></div><div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Chapati / Kebab</span><span class="text-[#b28950] font-bold">3,000/-</span></div></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Half Cake / Pancake</span><span class="text-[#b28950] font-bold">1,000/-</span></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- Catering & Private Chef CTA (unchanged) -->
+  <section class="py-20 px-5 max-w-7xl mx-auto"><div class="grid md:grid-cols-2 gap-8"><div class="relative bg-[#4a0404] rounded-3xl p-10 text-white h-96 flex flex-col justify-end"><i class="fas fa-holly-berry absolute top-8 right-8 text-7xl opacity-10"></i><h3 class="text-3xl font-serif mb-3">Mikolo & Wedding Catering</h3><p class="text-sm opacity-80 mb-6">Traditional introductions, weddings, corporate buffets — full-service by Chef Kyegonza.</p><a href="contact.html" class="bg-[#b28950] w-fit px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-white hover:text-[#4a0404] transition inline-block">Request Quote</a></div><div class="relative bg-white border rounded-3xl p-10 shadow-xl h-96 flex flex-col justify-end"><i class="fas fa-hat-chef absolute top-8 right-8 text-7xl opacity-10"></i><h3 class="text-3xl font-serif text-gray-800 mb-3">Private Chef Experience</h3><p class="text-sm text-stone-600 mb-6">Personalized dining at home, intimate dinners, weekly meal prep by Chef Kyegonza himself.</p><div class="flex gap-4"><a href="contact.html" class="bg-[#4a0404] text-white px-6 py-2 rounded-full text-xs font-bold uppercase">Book Chef</a><a href="https://wa.me/256702586485" class="border border-stone-300 px-6 py-2 rounded-full text-xs font-bold flex items-center gap-2"><i class="fab fa-whatsapp text-green-600"></i> Chat</a></div></div></div></section>
+
+  <!-- Final CTA -->
+  <section class="relative py-24 bg-[#4a0404] text-center"><div class="max-w-3xl mx-auto px-5"><h2 class="text-white text-4xl md:text-5xl font-serif mb-6">Let Chef Kyegonza Craft Your Next Event</h2><p class="text-red-100 text-lg mb-10">Select your date, choose your menu — we handle the rest with passion and excellence. Nationwide service.</p><div class="flex flex-wrap justify-center gap-5"><a href="tel:+256702586485" class="bg-white text-[#4a0404] px-8 py-4 rounded-full font-bold shadow-xl hover:scale-105 transition"><i class="fas fa-phone-alt mr-2"></i> Call Now</a><a href="mailto:kyegonzajoshua@gmail.com" class="bg-transparent border-2 border-white/40 text-white px-8 py-4 rounded-full font-bold hover:bg-white/10 transition">Email Inquiry</a></div></div></section>
+
+  <footer class="bg-[#121212] pt-16 pb-10 text-white border-t border-white/5"><div class="max-w-7xl mx-auto px-5 grid md:grid-cols-4 gap-8"><div><img src="ch.png" class="w-12 h-12 bg-white rounded-full p-1 mb-3"><p class="text-xs text-gray-400">Chef Kyegonza — elevating Ugandan culinary traditions since 2020.</p></div><div><h4 class="text-[#b28950] text-xs font-bold uppercase tracking-wider mb-4">Explore</h4><ul class="space-y-2 text-xs text-gray-400"><li><a href="#" class="hover:text-white">Home</a></li><li><a href="#featured" class="hover:text-white">Menu</a></li><li><a href="contact.html" class="hover:text-white">Contact</a></li><li><a href="location.html" class="hover:text-white">Location</a></li></ul></div><div><h4 class="text-[#b28950] text-xs font-bold uppercase tracking-wider mb-4">Services</h4><ul class="space-y-2 text-xs text-gray-400"><li>Mikolo Catering</li><li>Private Chef</li><li>Office Delivery</li></ul></div><div><h4 class="text-[#b28950] text-xs font-bold uppercase tracking-wider mb-4">Contact</h4><p class="text-xs"><i class="fas fa-phone mr-2"></i> +256 702 586 485</p><p class="text-xs mt-2"><i class="fas fa-map-marker-alt mr-2"></i> Kampala, Uganda</p></div></div><div class="text-center text-[10px] text-gray-600 mt-12 pt-6 border-t border-white/5">© 2026 Chef Kyegonza — Authentic Taste, Modern Excellence.</div></footer>
+</main>
+
+<!-- CART SIDEBAR (minimal, unchanged) -->
+<div id="cartSidebar" class="fixed inset-0 z-[3000] invisible opacity-0 transition-all duration-400"><div id="cartOverlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div><div id="cartContainer" class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl translate-x-full transition-transform duration-400 flex flex-col"><div class="p-6 bg-[#4a0404] text-white flex justify-between"><div><h3 class="font-bold">Your Order</h3><p class="text-[10px] opacity-70">Chef Kyegonza</p></div><button id="closeCartBtn" class="text-2xl">&times;</button></div><div id="cartItemsPlaceholder" class="flex-1 flex items-center justify-center flex-col text-stone-400"><i class="fas fa-shopping-basket text-5xl mb-3"></i><p class="text-sm">Cart is empty</p></div><div class="p-6 border-t"><div class="flex justify-between mb-4"><span class="text-stone-500 text-sm">Subtotal</span><span id="cartTotalAmount" class="font-bold text-[#4a0404] text-xl">0/-</span></div><button class="w-full bg-[#4a0404] text-white py-3 rounded-full font-bold text-sm">Proceed to Checkout</button></div></div></div>
+
+<!-- ✅ NEW: "Made by Anubis Digital" Button with X Cancel (no border radius, no emoji) -->
+<div id="madeByAnubisBadge" style="position: fixed; bottom: 24px; right: 24px; display: flex; align-items: center; background: #ffffff; border: 1px solid #c0bfbe; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 6px 12px 6px 16px; gap: 12px; z-index: 1020; border-radius: 0px; font-family: 'Inter', sans-serif;">
+  <a href="https://anubisdigital.github.io/" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1e1e1e; font-size: 14px; font-weight: 500; letter-spacing: 0.2px;">
+    <span>Made by</span>
+    <img src="anubid.png" alt="Anubis Digital" style="height: 24px; width: auto; display: block;">
+  </a>
+  <button id="cancelAnubisBadgeBtn" style="background: transparent; border: none; font-size: 22px; cursor: pointer; padding: 0 4px; margin: 0; line-height: 1; color: #6b6b6b; font-weight: 500; border-radius: 0px; transition: color 0.2s;" aria-label="Cancel" title="Cancel">&times;</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC473vxlU0ctrncjR8vUO-RcJc3nYrzX7I",
+    authDomain: "chef-eab8e.firebaseapp.com",
+    projectId: "chef-eab8e",
+    storageBucket: "chef-eab8e.firebasestorage.app",
+    messagingSenderId: "46565559235",
+    appId: "1:46565559235:web:dbd2e768bbb2e69c06cb76",
+    measurementId: "G-0ZTZYMZNTV"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const dynamicGrid = document.getElementById('dynamicProductsGrid');
+  const searchInput = document.getElementById('searchInput');
+  let allDynamicProducts = [];
+
+  const phoneNumber = "256702586485";
+  function sendWhatsApp(productName, productPrice, productDesc) {
+    const message = `Hello Chef Kyegonza, I would like to order: ${productName} (${productPrice})\nDescription: ${productDesc}`;
+    const encodedMsg = encodeURIComponent(message);
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMsg}`, '_blank');
+  }
+
+  // Attach WhatsApp to static products (including new Full Pizza)
+  document.querySelectorAll('.static-product .whatsapp-buy').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.menu-card');
+      const name = card.querySelector('h3')?.innerText || '';
+      const priceSpan = card.querySelector('.bg-\\[\\#b28950\\]')?.innerText || '0/-';
+      const desc = card.querySelector('p')?.innerText || '';
+      sendWhatsApp(name, priceSpan, desc);
+    });
+  });
+
+  async function loadDynamicProducts() {
+    try {
+      dynamicGrid.innerHTML = `<div class="col-span-full flex justify-center py-12"><div class="spinner-border"></div><span class="ml-3 text-stone-500">Loading specials...</span></div>`;
+      const snapshot = await getDocs(collection(db, "food"));
+      if (snapshot.empty) {
+        dynamicGrid.innerHTML = `<div class="col-span-full text-center py-16 text-stone-400"><i class="fas fa-utensils text-4xl mb-2 opacity-50"></i><p>No additional specials today. Check back soon!</p></div>`;
+        return;
+      }
+      const products = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        products.push({
+          id: doc.id,
+          name: data.name || data.title || "Chef's Special",
+          description: data.description || "Freshly prepared",
+          price: data.price || "0/-",
+          image: data.image || "food1.jpg"
+        });
+      });
+      allDynamicProducts = products;
+      renderDynamicGrid(products);
+    } catch (err) {
+      console.error(err);
+      dynamicGrid.innerHTML = `<div class="col-span-full text-center py-16 text-red-500"><i class="fas fa-exclamation-triangle"></i> Could not load specials. Please refresh.</div>`;
+    }
+  }
+
+  function renderDynamicGrid(products) {
+    if (!products.length) {
+      dynamicGrid.innerHTML = `<div class="col-span-full text-center py-16 text-stone-400"><i class="fas fa-search"></i><p>No matching dishes found</p></div>`;
+      return;
+    }
+    let html = '';
+    products.forEach(prod => {
+      html += `
+        <div class="menu-card dynamic-product" data-name="${prod.name.replace(/"/g, '&quot;')}" data-price="${prod.price}" data-desc="${prod.description.replace(/"/g, '&quot;')}">
+          <div class="relative h-56 overflow-hidden"><img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${prod.name}" loading="lazy" onerror="this.src='food1.jpg'"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">${prod.name}</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">${prod.price}</span></div><p class="text-stone-500 text-sm mt-2 line-clamp-2">${prod.description}</p><button class="whatsapp-btn whatsapp-buy-dynamic"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+      `;
+    });
+    dynamicGrid.innerHTML = html;
+    document.querySelectorAll('.dynamic-product .whatsapp-buy-dynamic').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const card = btn.closest('.menu-card');
+        const name = card.dataset.name;
+        const price = card.dataset.price;
+        const desc = card.dataset.desc;
+        sendWhatsApp(name, price, desc);
+      });
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = allDynamicProducts.filter(p => p.name.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
+      renderDynamicGrid(filtered);
+    });
+  }
+
+  loadDynamicProducts();
+
+  window.togglePriceMenu = function(type) {
+    const localBlock = document.getElementById('localMenuBlock');
+    const contBlock = document.getElementById('contMenuBlock');
+    const btnLocal = document.getElementById('btnLocal');
+    const btnCont = document.getElementById('btnCont');
+    if(type === 'local') {
+      localBlock.classList.remove('hidden');
+      contBlock.classList.add('hidden');
+      btnLocal.classList.add('price-tab-active');
+      btnLocal.classList.remove('text-gray-300');
+      btnCont.classList.remove('price-tab-active');
+      btnCont.classList.add('text-gray-300');
+    } else {
+      localBlock.classList.add('hidden');
+      contBlock.classList.remove('hidden');
+      btnCont.classList.add('price-tab-active');
+      btnCont.classList.remove('text-gray-300');
+      btnLocal.classList.remove('price-tab-active');
+      btnLocal.classList.add('text-gray-300');
+    }
+  };
+
+  // ====== CATEGORY CLICK REDIRECT TO more.html (with creative hover already applied via CSS) ======
+  const categoryBoxes = document.querySelectorAll('.category-card');
+  categoryBoxes.forEach(card => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'more.html';
+    });
+  });
+
+  // Mobile drawer & cart sidebar (unchanged but functional)
+  const mobileBtn = document.getElementById('mobileMenuBtn');
+  const drawer = document.getElementById('mobileDrawer');
+  const drawerInner = drawer.querySelector('div');
+  const closeDrawer = document.getElementById('closeDrawerBtn');
+  mobileBtn.onclick = () => { drawer.classList.remove('invisible', 'opacity-0'); drawerInner.classList.remove('translate-x-full'); };
+  closeDrawer.onclick = () => { drawerInner.classList.add('translate-x-full'); setTimeout(() => drawer.classList.add('invisible', 'opacity-0'), 300); };
+
+  const cartSidebar = document.getElementById('cartSidebar');
+  const cartContainerDiv = document.getElementById('cartContainer');
+  const closeCart = document.getElementById('closeCartBtn');
+  const cartOverlayDiv = document.getElementById('cartOverlay');
+  document.getElementById('cartHeaderBtn').addEventListener('click', () => { cartSidebar.classList.remove('invisible', 'opacity-0'); cartContainerDiv.classList.remove('translate-x-full'); });
+  closeCart.addEventListener('click', () => { cartContainerDiv.classList.add('translate-x-full'); setTimeout(() => cartSidebar.classList.add('invisible', 'opacity-0'), 400); });
+  cartOverlayDiv.addEventListener('click', () => { cartContainerDiv.classList.add('translate-x-full'); setTimeout(() => cartSidebar.classList.add('invisible', 'opacity-0'), 400); });
+
+  document.getElementById('fullMenuLink')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('featured').scrollIntoView({ behavior: 'smooth' }); });
+  document.getElementById('mobileFullMenu')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('featured').scrollIntoView({ behavior: 'smooth' }); drawerInner.classList.add('translate-x-full'); setTimeout(() => drawer.classList.add('invisible', 'opacity-0'), 300); });
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const id = this.getAttribute('href');
+      if(id && id !== '#') {
+        e.preventDefault();
+        const el = document.querySelector(id);
+        if(el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+<!-- small standalone script for "X" cancel button (no emoji, no border radius) -->
+<script>
+  (function() {
+    const cancelXBtn = document.getElementById('cancelAnubisBadgeBtn');
+    const badgeContainer = document.getElementById('madeByAnubisBadge');
+    if (cancelXBtn && badgeContainer) {
+      cancelXBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        badgeContainer.style.display = 'none';
+      });
+    }
+  })();
+</script>
+</body>
+</html>
