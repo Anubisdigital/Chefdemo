@@ -1,0 +1,362 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Chef Kyegonza | Admin Dashboard</title>
+  <link rel="icon" href="ch.png" type="image/x-icon">
+  <!-- Tailwind + Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { border-radius: 0px !important; }
+    body { font-family: 'Inter', sans-serif; background: #f8f5f0; }
+    button, input, textarea, select, .rounded, .rounded-lg, .rounded-xl, .rounded-full, .rounded-md, [class*="rounded"] { border-radius: 0px !important; }
+    .card, .bg-white, .border, .shadow-sm, .shadow-md { border-radius: 0px; }
+    .btn-primary { background-color: #4a0404; color: white; transition: 0.2s; }
+    .btn-primary:hover { background-color: #b28950; }
+    .btn-secondary { background-color: #e5e7eb; color: #1f2937; transition: 0.2s; }
+    .btn-secondary:hover { background-color: #d1d5db; }
+    .drawer-tab-btn { transition: 0.2s; width: 100%; text-align: left; }
+    .drawer-tab-btn:hover { background: #4a0404; color: white; }
+    .product-item, .blog-item { transition: background 0.1s; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top navigation with hamburger -->
+  <div class="bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-4">
+      <button id="hamburgerBtn" class="text-2xl text-[#4a0404] p-1"><i class="fas fa-bars"></i></button>
+      <img src="ch.png" alt="logo" class="w-8 h-8 object-contain">
+      <h1 id="mainTitle" class="text-lg font-bold text-[#4a0404]">Admin Dashboard</h1>
+    </div>
+    <a href="index.html" class="text-sm text-stone-500 hover:text-[#4a0404]"><i class="fas fa-home"></i> Home</a>
+  </div>
+
+  <!-- Drawer (left side full height) -->
+  <div id="sideDrawer" class="fixed top-0 left-0 h-full bg-white shadow-xl transform -translate-x-full transition-transform z-[1000] flex flex-col w-72 border-r border-stone-200">
+    <div class="flex justify-between items-center p-4 border-b"><span class="font-bold text-[#4a0404]">Admin Menu</span><button id="closeDrawerBtn" class="text-2xl">&times;</button></div>
+    <div class="flex flex-col p-2 gap-1">
+      <button data-tab="accounts" class="drawer-tab-btn flex items-center gap-3 p-3 hover:bg-stone-100 text-left"><i class="fas fa-users w-5"></i> Accounts</button>
+      <button data-tab="products" class="drawer-tab-btn flex items-center gap-3 p-3 hover:bg-stone-100 text-left"><i class="fas fa-utensils w-5"></i> Products</button>
+      <button data-tab="blogs" class="drawer-tab-btn flex items-center gap-3 p-3 hover:bg-stone-100 text-left"><i class="fas fa-newspaper w-5"></i> Blogs</button>
+    </div>
+  </div>
+  <div id="drawerOverlay" class="fixed inset-0 bg-black/40 hidden z-[999]"></div>
+
+  <!-- Main content -->
+  <main class="max-w-6xl mx-auto p-6">
+    <div id="dynamicContent" class="mt-2">Loading admin panel...</div>
+  </main>
+
+  <!-- Firebase SDKs and full logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC473vxlU0ctrncjR8vUO-RcJc3nYrzX7I",
+      authDomain: "chef-eab8e.firebaseapp.com",
+      projectId: "chef-eab8e",
+      storageBucket: "chef-eab8e.firebasestorage.app",
+      messagingSenderId: "46565559235",
+      appId: "1:46565559235:web:dbd2e768bbb2e69c06cb76",
+      measurementId: "G-0ZTZYMZNTV"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Cloudinary config
+    const CLOUD_NAME = "dopuutcka";
+    const UPLOAD_PRESET = "chef_anubis";
+
+    // DOM elements
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const drawerButtons = document.querySelectorAll('.drawer-tab-btn');
+    const mainTitle = document.getElementById('mainTitle');
+    const contentContainer = document.getElementById('dynamicContent');
+
+    function openDrawer() { sideDrawer.classList.remove('-translate-x-full'); drawerOverlay.classList.remove('hidden'); }
+    function closeDrawer() { sideDrawer.classList.add('-translate-x-full'); drawerOverlay.classList.add('hidden'); }
+    hamburgerBtn.onclick = openDrawer;
+    closeDrawerBtn.onclick = closeDrawer;
+    drawerOverlay.onclick = closeDrawer;
+
+    // Helper: upload image to Cloudinary
+    async function uploadImage(file) {
+      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      const response = await fetch(url, { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Image upload failed');
+      const data = await response.json();
+      return data.secure_url;
+    }
+
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // ==================== ACCOUNTS ====================
+    async function renderAccounts() {
+      contentContainer.innerHTML = '<div class="text-center py-12"><i class="fas fa-spinner fa-spin text-2xl text-stone-400"></i><p class="mt-2">Loading accounts...</p></div>';
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        if (usersSnapshot.empty) {
+          contentContainer.innerHTML = '<div class="text-center py-16 text-stone-400"><i class="fas fa-users-slash text-4xl mb-3"></i><p>No registered accounts yet.</p></div>';
+          return;
+        }
+        let html = `<div class="overflow-x-auto"><table class="min-w-full bg-white border border-stone-200"><thead class="bg-stone-100"><tr><th class="px-5 py-3 text-left text-xs font-bold uppercase">Name</th><th class="px-5 py-3 text-left text-xs font-bold uppercase">Email</th><th class="px-5 py-3 text-left text-xs font-bold uppercase">Provider</th><th class="px-5 py-3 text-left text-xs font-bold uppercase">Created At</th></tr></thead><tbody>`;
+        usersSnapshot.forEach(docSnap => {
+          const u = docSnap.data();
+          html += `<tr class="border-t border-stone-100"><td class="px-5 py-3">${escapeHtml(u.name || '-')}</td><td class="px-5 py-3">${escapeHtml(u.email || '-')}</td><td class="px-5 py-3">${escapeHtml(u.provider || 'email')}</td><td class="px-5 py-3 text-sm">${escapeHtml(u.createdAt?.slice(0,10) || 'unknown')}</td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        contentContainer.innerHTML = html;
+      } catch(err) { contentContainer.innerHTML = `<div class="text-red-600 p-6">Error: ${err.message}</div>`; }
+    }
+
+    // ==================== PRODUCTS (with note, red cross price) ====================
+    let currentEditProductId = null;
+    let selectedProductFile = null;
+
+    function resetProductForm() {
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodPrice').value = '';
+      document.getElementById('prodDesc').value = '';
+      document.getElementById('prodNote').value = '';
+      document.getElementById('redCrossCheckbox').checked = false;
+      document.getElementById('originalPriceGroup').classList.add('hidden');
+      document.getElementById('newPriceGroup').classList.add('hidden');
+      document.getElementById('originalPrice').value = '';
+      document.getElementById('newPrice').value = '';
+      document.getElementById('productImageFile').value = '';
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
+      document.getElementById('productImagePreview').src = '';
+      document.getElementById('imageUrlHidden').value = '';
+      selectedProductFile = null;
+      currentEditProductId = null;
+      document.getElementById('productFormBtn').innerHTML = '<i class="fas fa-plus mr-1"></i> Add Product';
+    }
+
+    window.toggleRedCrossFields = function() {
+      const isActive = document.getElementById('redCrossCheckbox').checked;
+      const origGroup = document.getElementById('originalPriceGroup');
+      const newGroup = document.getElementById('newPriceGroup');
+      if (isActive) {
+        origGroup.classList.remove('hidden');
+        newGroup.classList.remove('hidden');
+      } else {
+        origGroup.classList.add('hidden');
+        newGroup.classList.add('hidden');
+      }
+    };
+
+    async function saveProduct() {
+      const name = document.getElementById('prodName').value.trim();
+      const price = document.getElementById('prodPrice').value.trim();
+      const description = document.getElementById('prodDesc').value.trim();
+      const noteRaw = document.getElementById('prodNote').value.trim();
+      const wordCount = noteRaw.split(/\s+/).filter(w => w.length > 0).length;
+      if (wordCount > 5) { alert('Note must be 5 words maximum.'); return; }
+      if (!name || !price || !description) { alert('Name, Price and Description are required.'); return; }
+      
+      const redCrossActive = document.getElementById('redCrossCheckbox').checked;
+      let originalPrice = '', newPrice = '';
+      if (redCrossActive) {
+        originalPrice = document.getElementById('originalPrice').value.trim();
+        newPrice = document.getElementById('newPrice').value.trim();
+        if (!originalPrice || !newPrice) { alert('Original price and new price are required when Sale is active.'); return; }
+      }
+
+      let imageUrl = document.getElementById('imageUrlHidden').value;
+      if (selectedProductFile && !imageUrl) {
+        try { imageUrl = await uploadImage(selectedProductFile); document.getElementById('imageUrlHidden').value = imageUrl; } 
+        catch(err) { alert('Image upload failed'); return; }
+      }
+      if (!imageUrl) imageUrl = 'food1.jpg';
+
+      const productData = { name, price, description, note: noteRaw, redCrossActive, originalPrice, newPrice, image: imageUrl, updatedAt: new Date().toISOString() };
+      try {
+        if (currentEditProductId) { await updateDoc(doc(db, "food", currentEditProductId), productData); alert('Product updated'); }
+        else { await addDoc(collection(db, "food"), { ...productData, createdAt: new Date().toISOString() }); alert('Product added'); }
+        resetProductForm();
+        renderProducts();
+      } catch(err) { alert('Error saving product: ' + err.message); }
+    }
+
+    async function editProduct(productId, data) {
+      currentEditProductId = productId;
+      document.getElementById('prodName').value = data.name || '';
+      document.getElementById('prodPrice').value = data.price || '';
+      document.getElementById('prodDesc').value = data.description || '';
+      document.getElementById('prodNote').value = data.note || '';
+      const redCross = data.redCrossActive || false;
+      document.getElementById('redCrossCheckbox').checked = redCross;
+      window.toggleRedCrossFields();
+      if (redCross) {
+        document.getElementById('originalPrice').value = data.originalPrice || '';
+        document.getElementById('newPrice').value = data.newPrice || '';
+      }
+      document.getElementById('imageUrlHidden').value = data.image || '';
+      if (data.image && data.image !== 'food1.jpg') {
+        document.getElementById('productImagePreview').src = data.image;
+        document.getElementById('imagePreviewContainer').classList.remove('hidden');
+      } else { document.getElementById('imagePreviewContainer').classList.add('hidden'); }
+      document.getElementById('productFormBtn').innerHTML = '<i class="fas fa-save mr-1"></i> Update Product';
+      document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function deleteProduct(productId) {
+      if (confirm('Delete this product permanently?')) { await deleteDoc(doc(db, "food", productId)); renderProducts(); }
+    }
+
+    async function renderProducts() {
+      contentContainer.innerHTML = '<div class="text-center py-12"><i class="fas fa-spinner fa-spin text-2xl"></i><p>Loading products...</p></div>';
+      try {
+        const snapshot = await getDocs(collection(db, "food"));
+        let productsHtml = `
+          <div id="productsSection" class="bg-white border border-stone-200 p-5 mb-8">
+            <h3 class="text-lg font-bold mb-4">Add / Edit Product</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><label class="block text-xs font-bold uppercase">Name *</label><input type="text" id="prodName" class="w-full border p-2"></div>
+              <div><label class="block text-xs font-bold uppercase">Regular Price *</label><input type="text" id="prodPrice" placeholder="e.g. 25,000/-" class="w-full border p-2"></div>
+              <div class="md:col-span-2"><label class="block text-xs font-bold uppercase">Description *</label><textarea id="prodDesc" rows="2" class="w-full border p-2"></textarea></div>
+              <div><label class="block text-xs font-bold uppercase">Note (max 5 words)</label><input type="text" id="prodNote" maxlength="40" class="w-full border p-2" placeholder="Limited offer"></div>
+              <div class="flex items-center gap-3"><label class="flex items-center gap-2"><input type="checkbox" id="redCrossCheckbox" onclick="toggleRedCrossFields()"> <span class="text-xs font-bold uppercase">Sale / Red Cross</span></label></div>
+              <div id="originalPriceGroup" class="hidden"><label class="block text-xs font-bold uppercase">Original Price (crossed)</label><input type="text" id="originalPrice" class="w-full border p-2" placeholder="30,000/-"></div>
+              <div id="newPriceGroup" class="hidden"><label class="block text-xs font-bold uppercase">New Price (sale)</label><input type="text" id="newPrice" class="w-full border p-2" placeholder="22,000/-"></div>
+              <div class="md:col-span-2"><label class="block text-xs font-bold uppercase">Product Image</label><input type="file" id="productImageFile" accept="image/*"><div id="imagePreviewContainer" class="hidden mt-2"><img id="productImagePreview" class="h-20 w-20 object-cover border"></div><input type="hidden" id="imageUrlHidden"></div>
+              <div class="md:col-span-2"><button id="productFormBtn" class="btn-primary px-5 py-2 font-bold uppercase text-sm">Add Product</button> <button type="button" id="cancelProductEdit" class="border px-5 py-2 ml-3">Cancel</button></div>
+            </div>
+          </div>
+          <h3 class="font-bold text-lg mb-3">Existing Menu Items</h3>
+          <div class="grid gap-3">
+        `;
+        snapshot.forEach(docSnap => {
+          const p = docSnap.data();
+          const noteBadge = p.note ? `<span class="inline-block bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 mr-2">${escapeHtml(p.note)}</span>` : '';
+          const crossFlag = p.redCrossActive ? '<span class="text-red-600 text-xs ml-2"><i class="fas fa-times-circle"></i> Sale active</span>' : '';
+          productsHtml += `
+            <div class="bg-white border border-stone-200 p-4 flex flex-wrap justify-between items-center">
+              <div class="flex items-center gap-4"><img src="${p.image || 'food1.jpg'}" class="w-12 h-12 object-cover"> <div><p class="font-bold">${escapeHtml(p.name)}</p><p class="text-sm text-stone-600">${escapeHtml(p.price)} ${crossFlag}</p><div class="text-xs text-stone-400">${noteBadge} ${escapeHtml(p.description?.slice(0,60))}</div></div></div>
+              <div class="flex gap-2 mt-2 sm:mt-0"><button class="edit-product-btn text-blue-700 text-sm px-3 py-1 border" data-id="${docSnap.id}" data-name='${JSON.stringify(p)}'><i class="fas fa-edit"></i> Edit</button><button class="delete-product-btn text-red-700 text-sm px-3 py-1 border" data-id="${docSnap.id}"><i class="fas fa-trash"></i> Delete</button></div>
+            </div>
+          `;
+        });
+        productsHtml += `</div>`;
+        contentContainer.innerHTML = productsHtml;
+        document.getElementById('productFormBtn').onclick = saveProduct;
+        document.getElementById('cancelProductEdit').onclick = resetProductForm;
+        document.getElementById('redCrossCheckbox').onchange = window.toggleRedCrossFields;
+        document.getElementById('productImageFile').onchange = (e) => {
+          const file = e.target.files[0];
+          if (file) { selectedProductFile = file; const reader = new FileReader(); reader.onload = (ev) => { document.getElementById('productImagePreview').src = ev.target.result; document.getElementById('imagePreviewContainer').classList.remove('hidden'); }; reader.readAsDataURL(file); }
+        };
+        document.querySelectorAll('.edit-product-btn').forEach(btn => { btn.addEventListener('click', () => { const id = btn.getAttribute('data-id'); const prodObj = JSON.parse(btn.getAttribute('data-name')); editProduct(id, prodObj); }); });
+        document.querySelectorAll('.delete-product-btn').forEach(btn => { btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id'))); });
+        if (currentEditProductId) window.toggleRedCrossFields();
+      } catch(err) { contentContainer.innerHTML = `<div class="text-red-600">Error: ${err.message}</div>`; }
+    }
+
+    // ==================== BLOGS (text, video, image) ====================
+    let currentEditBlogId = null;
+    function resetBlogForm() {
+      document.getElementById('blogTitle').value = '';
+      document.getElementById('blogText').value = '';
+      document.getElementById('blogVideoUrl').value = '';
+      document.getElementById('blogImageFile').value = '';
+      document.getElementById('blogImagePreviewContainer').classList.add('hidden');
+      document.getElementById('blogImageUrlHidden').value = '';
+      currentEditBlogId = null;
+      document.getElementById('blogSubmitBtn').innerHTML = '<i class="fas fa-plus mr-1"></i> Add Blog Post';
+    }
+
+    async function saveBlogPost() {
+      const title = document.getElementById('blogTitle').value.trim();
+      const textContent = document.getElementById('blogText').value.trim();
+      const videoUrl = document.getElementById('blogVideoUrl').value.trim();
+      if (!title || !textContent) { alert('Title and text content are required'); return; }
+      let imageUrl = document.getElementById('blogImageUrlHidden').value;
+      const imageFile = document.getElementById('blogImageFile').files[0];
+      if (imageFile && !imageUrl) {
+        try { imageUrl = await uploadImage(imageFile); document.getElementById('blogImageUrlHidden').value = imageUrl; } 
+        catch(e) { alert('Image upload failed'); return; }
+      }
+      const blogData = { title, textContent, videoUrl, imageUrl: imageUrl || '', updatedAt: new Date().toISOString() };
+      try {
+        if (currentEditBlogId) await updateDoc(doc(db, "blog", currentEditBlogId), blogData);
+        else await addDoc(collection(db, "blog"), { ...blogData, createdAt: new Date().toISOString() });
+        alert('Blog post saved');
+        resetBlogForm();
+        renderBlogs();
+      } catch(err) { alert(err.message); }
+    }
+
+    async function deleteBlog(blogId) { if(confirm('Delete this blog post?')) { await deleteDoc(doc(db, "blog", blogId)); renderBlogs(); } }
+    async function editBlog(blogId, data) {
+      currentEditBlogId = blogId;
+      document.getElementById('blogTitle').value = data.title || '';
+      document.getElementById('blogText').value = data.textContent || '';
+      document.getElementById('blogVideoUrl').value = data.videoUrl || '';
+      document.getElementById('blogImageUrlHidden').value = data.imageUrl || '';
+      if (data.imageUrl) { document.getElementById('blogImagePreview').src = data.imageUrl; document.getElementById('blogImagePreviewContainer').classList.remove('hidden'); }
+      document.getElementById('blogSubmitBtn').innerHTML = '<i class="fas fa-save mr-1"></i> Update Post';
+    }
+
+    async function renderBlogs() {
+      contentContainer.innerHTML = '<div class="py-12 text-center"><i class="fas fa-spinner fa-spin"></i> Loading blog posts...</div>';
+      try {
+        const snapshot = await getDocs(collection(db, "blog"));
+        let html = `
+          <div class="bg-white border border-stone-200 p-5 mb-8">
+            <h3 class="text-lg font-bold mb-3">Add / Edit Blog Post</h3>
+            <div class="space-y-3">
+              <input type="text" id="blogTitle" placeholder="Title" class="w-full border p-2">
+              <textarea id="blogText" rows="4" placeholder="Content (no emojis)" class="w-full border p-2"></textarea>
+              <input type="text" id="blogVideoUrl" placeholder="YouTube or video embed link (optional)" class="w-full border p-2">
+              <div><label class="block text-xs font-bold uppercase">Feature Image (optional)</label><input type="file" id="blogImageFile" accept="image/*"><div id="blogImagePreviewContainer" class="hidden mt-2"><img id="blogImagePreview" class="h-16 w-16 object-cover border"></div><input type="hidden" id="blogImageUrlHidden"></div>
+              <div><button id="blogSubmitBtn" class="btn-primary px-5 py-2">Add Blog Post</button> <button id="cancelBlogEdit" class="border px-5 py-2 ml-2">Cancel</button></div>
+            </div>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Existing Blog Posts</h3>
+          <div class="grid gap-4">
+        `;
+        snapshot.forEach(docSnap => {
+          const b = docSnap.data();
+          html += `<div class="bg-white border p-4 flex flex-wrap justify-between items-start"><div><h4 class="font-bold">${escapeHtml(b.title)}</h4><p class="text-sm text-stone-600">${escapeHtml(b.textContent?.slice(0,80))}...</p>${b.videoUrl ? `<a href="${b.videoUrl}" target="_blank" class="text-blue-600 text-xs">Watch video</a>` : ''}</div><div class="flex gap-2"><button class="edit-blog-btn text-blue-700 text-sm border px-3 py-1" data-id="${docSnap.id}" data-data='${JSON.stringify(b)}'>Edit</button><button class="delete-blog-btn text-red-700 text-sm border px-3 py-1" data-id="${docSnap.id}">Delete</button></div></div>`;
+        });
+        html += `</div>`;
+        contentContainer.innerHTML = html;
+
+        document.getElementById('blogSubmitBtn').onclick = saveBlogPost;
+        document.getElementById('cancelBlogEdit').onclick = resetBlogForm;
+        document.getElementById('blogImageFile').onchange = (e) => {
+          const file = e.target.files[0];
+          if(file) { const reader = new FileReader(); reader.onload = (ev) => { document.getElementById('blogImagePreview').src = ev.target.result; document.getElementById('blogImagePreviewContainer').classList.remove('hidden'); }; reader.readAsDataURL(file); }
+        };
+        document.querySelectorAll('.edit-blog-btn').forEach(btn => { btn.addEventListener('click', () => { const id = btn.getAttribute('data-id'); const data = JSON.parse(btn.getAttribute('data-data')); editBlog(id, data); }); });
+        document.querySelectorAll('.delete-blog-btn').forEach(btn => { btn.addEventListener('click', () => deleteBlog(btn.getAttribute('data-id'))); });
+      } catch(err) { contentContainer.innerHTML = `<div class="text-red-600">${err.message}</div>`; }
+    }
+
+    // ==================== TAB SWITCHING ====================
+    async function switchTab(tab) {
+      mainTitle.innerText = tab.charAt(0).toUpperCase() + tab.slice(1) + ' Management';
+      if (tab === 'accounts') await renderAccounts();
+      else if (tab === 'products') await renderProducts();
+      else if (tab === 'blogs') await renderBlogs();
+      closeDrawer();
+    }
+
+    drawerButtons.forEach(btn => { btn.addEventListener('click', () => { const tab = btn.getAttribute('data-tab'); switchTab(tab); }); });
+    // Default load products view
+    switchTab('products');
+  </script>
+</body>
+</html>
