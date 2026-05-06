@@ -1,0 +1,866 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Chef Kyegonza | Premium Catering & Mikolo Services</title>
+  <link rel="icon" href="ch.png" type="image/x-icon">
+  <meta name="description" content="Chef Kyegonza - Private Chef, Outside Catering, Mikolo Services in Uganda. Authentic cuisine with modern touch.">
+
+  <!-- Tailwind + Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Clean modern fonts: Inter + Playfair Display -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background-color: #fefcf8; color: #1e1e1e; scroll-behavior: smooth; }
+    h1, h2, h3, .serif-heading { font-family: 'Playfair Display', serif; }
+    .glass-nav { background: rgba(255, 253, 248, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(74, 4, 4, 0.1); }
+    
+    /* CREATIVE HOVER EFFECT FOR CATEGORY CARDS + CLICK REDIRECT */
+    .category-card {
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      border-radius: 1.5rem;
+      background: white;
+    }
+    .category-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      background: #fffaf5;
+      box-shadow: 0 20px 30px -12px rgba(74, 4, 4, 0.2);
+      border-color: #b28950 !important;
+    }
+    .category-card:hover .category-icon {
+      background-color: #4a0404 !important;
+      color: white !important;
+      transform: rotate(3deg) scale(1.05);
+      transition: all 0.2s ease;
+    }
+    
+    .menu-card { background: white; border-radius: 1.5rem; overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 8px 20px rgba(0,0,0,0.02); position: relative; }
+    .menu-card:hover { transform: translateY(-6px); box-shadow: 0 20px 35px -12px rgba(74,4,4,0.15); border-color: rgba(74,4,4,0.2); }
+    
+    /* ENHANCED DROPDOWN: FULL HEIGHT (100VH) + RIGHT-TO-LEFT SLIDE (CLICK ACTIVATED) */
+    .dropdown {
+      position: relative;
+    }
+    /* original hover dropdown hidden completely, replaced by click flyout */
+    .dropdown .dropdown-menu {
+      display: none;
+    }
+    /* FULL HEIGHT PANEL - comes from right to left */
+    .pages-flyout {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 100vh;
+      background: white;
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 2rem 1rem 2rem 1.5rem;
+      border-left: 1px solid #f0e6e0;
+    }
+    .pages-flyout.open {
+      transform: translateX(0);
+    }
+    .flyout-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 2rem;
+    }
+    .close-flyout-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #4a0404;
+      transition: 0.2s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .close-flyout-btn:hover {
+      background: #f5efe8;
+    }
+    .flyout-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .flyout-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      color: #1e1e1e;
+      font-size: 1rem;
+      font-weight: 800;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 60px;
+      transition: 0.2s;
+      background: white;
+    }
+    .flyout-link i {
+      width: 24px;
+      font-size: 1.1rem;
+    }
+    .flyout-link:hover {
+      background: #4a0404;
+      color: white;
+    }
+    .flyout-link.highlight-account {
+      background: #4a0404;
+      color: white;
+      margin-top: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .flyout-link.highlight-account i {
+      color: #ffd966;
+    }
+    .flyout-link.highlight-account:hover {
+      background: #b28950;
+      transform: scale(1.02);
+    }
+    .flyout-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(3px);
+      z-index: 9998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+    }
+    .flyout-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .whatsapp-btn { background-color: #25D366; color: white; padding: 8px 16px; border-radius: 40px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; border: none; cursor: pointer; margin-top: 12px; width: 100%; justify-content: center; }
+    .whatsapp-btn:hover { background-color: #128C7E; transform: scale(1.02); }
+    .spinner-border { width: 48px; height: 48px; border: 4px solid #f0e6e0; border-top: 4px solid #4a0404; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* product note badge (top right) */
+    .product-note-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #d97706;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 30px;
+      z-index: 15;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      max-width: 110px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* price cross / red cross effect */
+    .price-cross {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(220, 38, 38, 0.1);
+      padding: 2px 8px 2px 6px;
+      border-radius: 40px;
+    }
+    .price-cross .old-price {
+      text-decoration: line-through;
+      font-size: 0.8rem;
+      color: #991b1b;
+      font-weight: 500;
+    }
+    .price-cross i {
+      color: #dc2626;
+      font-size: 0.75rem;
+    }
+    .new-price {
+      font-weight: 800;
+      color: #b28950;
+      font-size: 1rem;
+    }
+
+    /* popup message style (floating) */
+    .account-popup {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      z-index: 1050;
+      background: #1e293b;
+      color: white;
+      max-width: 340px;
+      border-radius: 20px;
+      box-shadow: 0 20px 35px -10px rgba(0,0,0,0.3);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(4px);
+      background: rgba(30, 41, 59, 0.95);
+      border-left: 5px solid #b28950;
+      transition: all 0.2s;
+    }
+    .account-popup p {
+      font-size: 0.85rem;
+      line-height: 1.4;
+      margin: 0;
+      padding-right: 20px;
+    }
+    .popup-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      align-items: center;
+    }
+    .popup-btn {
+      background: #b28950;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: white;
+      transition: 0.2s;
+    }
+    .popup-close {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      font-size: 1.4rem;
+      cursor: pointer;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .popup-btn:hover { background: #4a0404; }
+
+    /* IMPROVED BLOG GALLERY - perfect image fit, no placeholder when no images/video */
+    .blog-card {
+      background: white;
+      border-radius: 1.25rem;
+      border: 1px solid #f0e6e0;
+      overflow: hidden;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-image-gallery {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #f5f0eb;
+    }
+    .blog-slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      will-change: transform;
+    }
+    .blog-slide {
+      flex: 0 0 100%;
+      height: 100%;
+    }
+    .blog-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .blog-slide img:hover {
+      transform: scale(1.02);
+    }
+    .gallery-nav {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      display: flex;
+      gap: 10px;
+      z-index: 20;
+    }
+    .gallery-nav button {
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gallery-nav button:hover { background: #4a0404; transform: scale(1.05); }
+    .blog-video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border: none;
+    }
+    .blog-text {
+      font-size: 0.9rem;
+      color: #2d2d2d;
+      line-height: 1.5;
+    }
+    .blog-content-full {
+      display: none;
+      margin-top: 12px;
+    }
+    .blog-content-full.show {
+      display: block;
+    }
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: #b28950;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 8px 0 4px;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .read-more-btn:hover { color: #4a0404; gap: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- MAIN NAVIGATION (GLASS) -->
+<nav class="glass-nav fixed top-0 w-full z-[1000] px-5 py-3 md:px-8 transition-all duration-200">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <a href="#" class="flex items-center gap-3 group">
+      <div class="p-1 bg-white rounded-full shadow-md group-hover:rotate-6 transition-transform">
+        <img src="ch.png" alt="Chef Kyegonza" class="w-10 h-10 object-contain">
+      </div>
+      <div class="hidden sm:block">
+        <h1 class="text-xl font-bold tracking-tight text-[#4a0404]">Chef Kyegonza</h1>
+        <p class="text-[9px] uppercase tracking-[0.25em] font-semibold text-stone-500">Elite Catering & Mikolo Specialist</p>
+      </div>
+    </a>
+
+    <div class="flex-1 max-w-sm mx-5 hidden lg:block relative">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
+      <input type="text" id="searchInput" placeholder="Search dishes..." class="w-full pl-10 pr-4 py-2.5 rounded-full border border-stone-200 bg-white/80 focus:border-[#4a0404] focus:ring-1 focus:ring-[#4a0404] outline-none transition text-sm">
+    </div>
+
+    <div class="hidden md:flex items-center gap-7">
+      <a href="#categories" class="text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">Categories</a>
+      <a href="#featured" class="text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">Menu</a>
+      <a href="#pricelist" class="text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">Price list</a>
+      <div class="relative dropdown" id="pagesDropdownContainer">
+        <button id="pagesFlyoutBtn" class="flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-stone-700 hover:text-[#4a0404] transition">
+          Pages <i class="fas fa-chevron-down text-[10px]"></i>
+        </button>
+      </div>
+      <a href="apply.html" id="navCreateAccountBtn" class="bg-[#4a0404] text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-[#b28950] transition shadow-md"><i class="fas fa-user-plus mr-1"></i> Sign up</a>
+      <button id="cartHeaderBtn" class="relative w-10 h-10 rounded-full bg-[#4a0404] text-white flex items-center justify-center shadow-md hover:scale-105 transition">
+        <i class="fas fa-shopping-bag"></i>
+        <span id="cartBadge" class="absolute -top-1 -right-1 bg-[#b28950] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+    </div>
+
+    <button id="mobileMenuBtn" class="md:hidden text-2xl text-[#4a0404]"><i class="fas fa-bars-staggered"></i></button>
+  </div>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div id="mobileDrawer" class="fixed inset-0 bg-black/50 z-[2000] opacity-0 invisible transition-all duration-300">
+  <div class="absolute right-0 top-0 h-full w-[85%] max-w-xs bg-white p-6 translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex justify-between items-center mb-8">
+      <img src="ch.png" class="w-12 h-12" alt="Logo">
+      <button id="closeDrawerBtn" class="text-3xl">&times;</button>
+    </div>
+    <nav class="flex flex-col gap-6 text-base font-semibold">
+      <a href="#" class="flex items-center gap-3 text-[#4a0404]"><i class="fas fa-home w-6"></i> Home</a>
+      <a href="#categories" class="flex items-center gap-3"><i class="fas fa-grid-2 w-6"></i> Categories</a>
+      <a href="#featured" class="flex items-center gap-3"><i class="fas fa-utensils w-6"></i> Our Menu</a>
+      <a href="contact.html" class="flex items-center gap-3"><i class="fas fa-envelope w-6"></i> Contact</a>
+      <a href="location.html" class="flex items-center gap-3"><i class="fas fa-map-marker-alt w-6"></i> Location</a>
+      <a href="#" class="flex items-center gap-3" id="mobileFullMenu"><i class="fas fa-list-ul w-6"></i> Full Menu</a>
+      <a href="apply.html" class="flex items-center gap-3 bg-[#4a0404] text-white rounded-full px-3 py-2 text-sm"><i class="fas fa-user-plus w-6"></i> Create Account</a>
+      <a href="tel:+256702586485" class="flex items-center gap-3"><i class="fas fa-phone w-6"></i> Call Chef</a>
+    </nav>
+    <div class="mt-10 pt-6 border-t border-stone-100">
+      <p class="text-[10px] uppercase tracking-wider text-stone-400 mb-3">Follow</p>
+      <div class="flex gap-4"><a href="#" class="w-9 h-9 bg-stone-100 rounded-full flex items-center justify-center"><i class="fab fa-instagram"></i></a><a href="#" class="w-9 h-9 bg-stone-100 rounded-full flex items-center justify-center"><i class="fab fa-whatsapp text-green-600"></i></a></div>
+    </div>
+  </div>
+</div>
+
+<main class="pt-28 md:pt-32">
+  <!-- Hero Section -->
+  <section class="px-5 md:px-8 max-w-7xl mx-auto mb-20">
+    <div class="relative h-[480px] md:h-[580px] rounded-[2rem] overflow-hidden shadow-2xl">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent z-10"></div>
+      <div class="relative z-20 h-full flex flex-col justify-center px-6 md:px-12 max-w-xl">
+        <span class="inline-block px-4 py-1.5 bg-[#b28950] text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-full mb-5">Chef Kyegonza • Mikolo Specialist</span>
+        <h2 class="text-4xl md:text-6xl text-white leading-tight mb-6">Let's Meet <span class="text-[#b28950]">Artistry</span></h2>
+        <p class="text-white/90 text-lg mb-5">Private Chef • Outside Catering • Authentic Mikolo & Continental Cuisine</p>
+        <div class="flex flex-wrap gap-4">
+          <a href="contact.html" class="bg-white text-[#4a0404] px-7 py-3 rounded-full font-bold shadow-lg hover:bg-[#b28950] hover:text-white transition"><i class="fas fa-utensils mr-2"></i> Request a Chef</a>
+          <a href="#featured" class="backdrop-blur-sm border border-white/40 text-white px-7 py-3 rounded-full font-bold hover:bg-white/10 transition">Explore Menu</a>
+        </div>
+      </div>
+      <div class="absolute inset-0"><img src="food1.jpg" class="w-full h-full object-cover" alt="Chef Kyegonza signature dish"></div>
+    </div>
+  </section>
+
+  <!-- BLOG SECTION (removed emoji) -->
+  <section id="blogSection" class="px-5 md:px-8 max-w-7xl mx-auto mb-16">
+    <div class="mb-8 text-center">
+      <span class="text-[#b28950] text-xs font-bold uppercase tracking-[0.3em]">CHEF'S JOURNAL</span>
+      <h2 class="text-3xl font-serif text-gray-800 mt-2">Stories & Techniques</h2>
+      <p class="text-stone-500 max-w-xl mx-auto">Recipes, video tutorials, and kitchen inspirations</p>
+    </div>
+    <div id="blogPostsContainer" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div class="col-span-full flex justify-center py-8"><div class="spinner-border"></div><span class="ml-3 text-stone-500">Loading blog updates...</span></div>
+    </div>
+  </section>
+
+  <!-- STATIC FEATURED PRODUCTS (unchanged) -->
+  <section id="featured" class="bg-stone-50/60 py-20 px-5 md:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-[#b28950] text-xs font-bold uppercase tracking-[0.3em]">Chef's Signature</span>
+        <h2 class="text-4xl font-serif text-gray-800 mt-2">Signature Creations by Chef Kyegonza</h2>
+        <p class="text-stone-500 max-w-xl mx-auto mt-2">Handcrafted dishes that define our culinary identity</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="food1.jpg" class="w-full h-full object-cover" alt="Burger"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">The Royal Beast Burger</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">18,000/-</span></div><p class="text-stone-500 text-sm mt-2">Double-patty beef burger with melted cheese, pickles, tomato, and sauce on a sesame bun.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="food2.jpg" class="w-full h-full object-cover" alt="Wrap"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Supreme Grilled Wrap</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">14,000/-</span></div><p class="text-stone-500 text-sm mt-2">Beef or chicken burrito wrap served with a side of seasoned French fries.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="food3.jpg" class="w-full h-full object-cover" alt="Samosa"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Golden Samosa</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">1,000/-</span></div><p class="text-stone-500 text-sm mt-2">Golden-brown fried Samosas garnished with fresh parsley. (per piece)</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="food4.jpg" class="w-full h-full object-cover" alt="Pilau"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Pilau + Chicken Platter</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">55,000/-</span></div><p class="text-stone-500 text-sm mt-2">Mixed platter: Pilau rice, French fries, sliced avocado, and beef or chicken stew.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="food5.jpg" class="w-full h-full object-cover" alt="Wings"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Glazed Chicken Wings</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">15,000/-</span></div><p class="text-stone-500 text-sm mt-2">Glazed chicken wings sautéed with peppers & onions, served with basket of fries.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="food6.jpg" class="w-full h-full object-cover" alt="Chips"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Chips Plain</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">5,000/-</span></div><p class="text-stone-500 text-sm mt-2">Classic French fries served in a red paper container.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+        <div class="menu-card static-product"><div class="relative h-56 overflow-hidden"><img src="pizza.jpg" class="w-full h-full object-cover" alt="Full Pizza"></div><div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">Full Pizza</h3><span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">30,000/-</span></div><p class="text-stone-500 text-sm mt-2">Freshly baked Supreme-style pizza with pepperoni, black olives, green bell peppers, and sausage.</p><button class="whatsapp-btn whatsapp-buy"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DYNAMIC FIREBASE PRODUCTS -->
+  <section id="dynamic-section" class="py-20 px-5 md:px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-[#b28950] text-xs font-bold uppercase tracking-[0.3em]">Kitchen Additions</span>
+        <h2 class="text-4xl font-serif text-gray-800 mt-2">Daily Specials by Chef Kyegonza</h2>
+        <p class="text-stone-500 max-w-xl mx-auto mt-2">Fresh inspirations from our creative table</p>
+      </div>
+      <div id="dynamicProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="col-span-full flex justify-center py-12"><div class="spinner-border"></div><span class="ml-3 text-stone-500">Loading specials...</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- price list section unchanged -->
+  <section id="pricelist" class="bg-[#121212] py-24 px-5 md:px-8 text-white relative">
+    <div class="max-w-7xl mx-auto"><div class="flex flex-col md:flex-row justify-between items-end mb-14 gap-6"><div><h3 class="text-[#b28950] text-xs font-bold uppercase tracking-[0.4em] mb-3">Official Price List</h3><h2 class="text-3xl md:text-5xl font-serif">Authentic Ugandan & Continental</h2><p class="text-gray-400 text-sm mt-2">Curated by Chef Kyegonza</p></div><div class="flex p-1 bg-white/10 rounded-full backdrop-blur-sm"><button onclick="togglePriceMenu('local')" id="btnLocal" class="price-tab-active px-7 py-2 rounded-full text-xs font-bold uppercase tracking-wider">Local Food</button><button onclick="togglePriceMenu('continental')" id="btnCont" class="px-7 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-gray-300 hover:text-white">Continental</button></div></div>
+    <div id="localMenuBlock" class="grid md:grid-cols-2 gap-12"><div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Fish (Chips + Fish)</span><span class="text-[#b28950] font-bold">30,000/-</span></div><p class="text-xs text-gray-400 mt-1">Whole deep-fried fish with lemon & tomatoes</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Pilau + Chicken</span><span class="text-[#b28950] font-bold">15,000/-</span></div><p class="text-xs text-gray-400 mt-1">Spiced rice with chicken stew</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Goat's Meat Stew</span><span class="text-[#b28950] font-bold">15,000/-</span></div></div></div><div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Mikolo Platter</span><span class="text-[#b28950] font-bold">40,000/-</span></div><p class="text-xs text-gray-400 mt-1">Roasted chicken, sausages, beef skewers, Pilau & fries</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Samosas (per pc)</span><span class="text-[#b28950] font-bold">1,000/-</span></div><p class="text-xs text-gray-400 mt-1">Golden-brown fried Samosas</p></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Wings + Chips</span><span class="text-[#b28950] font-bold">10,000/-</span></div></div></div></div>
+    <div id="contMenuBlock" class="hidden grid md:grid-cols-2 gap-12 fade-slide"><div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Full Pizza (Large)</span><span class="text-[#b28950] font-bold">30,000/-</span></div></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Chips + Chicken (L)</span><span class="text-[#b28950] font-bold">18,000/-</span></div></div></div><div class="space-y-6"><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Chapati / Kebab</span><span class="text-[#b28950] font-bold">3,000/-</span></div></div><div><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xl font-bold">Half Cake / Pancake</span><span class="text-[#b28950] font-bold">1,000/-</span></div></div></div></div></div>
+  </section>
+</main>
+
+<footer class="bg-[#121212] pt-16 pb-10 text-white border-t border-white/5"><div class="max-w-7xl mx-auto px-5 grid md:grid-cols-4 gap-8"><div><img src="ch.png" class="w-12 h-12 bg-white rounded-full p-1 mb-3"><p class="text-xs text-gray-400">Chef Kyegonza — elevating Ugandan culinary traditions since 2020.</p></div><div><h4 class="text-[#b28950] text-xs font-bold uppercase tracking-wider mb-4">Explore</h4><ul class="space-y-2 text-xs text-gray-400"><li><a href="#" class="hover:text-white">Home</a></li><li><a href="#featured" class="hover:text-white">Menu</a></li><li><a href="contact.html" class="hover:text-white">Contact</a></li><li><a href="location.html" class="hover:text-white">Location</a></li></ul></div><div><h4 class="text-[#b28950] text-xs font-bold uppercase tracking-wider mb-4">Services</h4><ul class="space-y-2 text-xs text-gray-400"><li>Mikolo Catering</li><li>Private Chef</li><li>Office Delivery</li></ul></div><div><h4 class="text-[#b28950] text-xs font-bold uppercase tracking-wider mb-4">Contact</h4><p class="text-xs"><i class="fas fa-phone mr-2"></i> +256 702 586 485</p><p class="text-xs mt-2"><i class="fas fa-map-marker-alt mr-2"></i> Kampala, Uganda</p></div></div><div class="text-center text-[10px] text-gray-600 mt-12 pt-6 border-t border-white/5">© 2026 Chef Kyegonza — Authentic Taste, Modern Excellence.</div></footer>
+
+<div id="accountPromptPopup" class="account-popup" style="display: none;">
+  <p><strong>Create an account</strong> to know about latest dishes, ingredients, and updates.</p>
+  <div class="popup-actions">
+    <a href="apply.html" id="popupApplyBtn" class="popup-btn">Create Account</a>
+    <button id="closePopupBtn" class="popup-close">&times;</button>
+  </div>
+</div>
+
+<!-- FULL HEIGHT RIGHT-TO-LEFT DROPDOWN PANEL (CLICK ACTIVATED) -->
+<div id="pagesFlyoutPanel" class="pages-flyout">
+  <div class="flyout-header">
+    <button id="closeFlyoutPanel" class="close-flyout-btn"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="flyout-nav">
+    <a href="contact.html" class="flyout-link"><i class="fas fa-envelope"></i> Contact</a>
+    <a href="location.html" class="flyout-link"><i class="fas fa-map-marker-alt"></i> Location</a>
+    <a href="#" class="flyout-link" id="fullMenuFlyoutLink"><i class="fas fa-utensils"></i> Full Menu</a>
+    <a href="apply.html" class="flyout-link highlight-account" id="createAccountFlyout"><i class="fas fa-user-plus"></i> Create Account</a>
+  </div>
+</div>
+<div id="flyoutOverlay" class="flyout-overlay"></div>
+
+<div id="madeByAnubisBadge" style="position: fixed; bottom: 24px; right: 24px; display: flex; align-items: center; background: #ffffff; border: 1px solid #c0bfbe; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 6px 12px 6px 16px; gap: 12px; z-index: 1020; border-radius: 0px;">
+  <a href="https://anubisdigital.github.io/" target="_blank" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1e1e1e; font-size: 14px; font-weight: 500;">
+    <span>Made by</span>
+    <img src="anubid.png" alt="Anubis Digital" style="height: 24px; width: auto;">
+  </a>
+  <button id="cancelAnubisBadgeBtn" style="background: transparent; border: none; font-size: 22px; cursor: pointer; padding: 0 4px; color: #6b6b6b;">&times;</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC473vxlU0ctrncjR8vUO-RcJc3nYrzX7I",
+    authDomain: "chef-eab8e.firebaseapp.com",
+    projectId: "chef-eab8e",
+    storageBucket: "chef-eab8e.firebasestorage.app",
+    messagingSenderId: "46565559235",
+    appId: "1:46565559235:web:dbd2e768bbb2e69c06cb76",
+    measurementId: "G-0ZTZYMZNTV"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  function truncateWords(text, limit = 30) {
+    if (!text) return '';
+    const words = text.split(/\s+/);
+    if (words.length <= limit) return { short: text, full: text, truncated: false };
+    const short = words.slice(0, limit).join(' ') + '...';
+    return { short, full: text, truncated: true };
+  }
+
+  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+  function renderImageGallery(images, blogId) {
+    if (!images || !images.length) return '';
+    const galleryId = `gallery-${blogId}`;
+    const slidesHtml = images.map((img, idx) => `
+      <div class="blog-slide">
+        <img src="${img}" alt="Blog visual ${idx+1}" loading="lazy" onerror="this.src='food1.jpg'">
+      </div>
+    `).join('');
+    const navButtons = images.length > 1 ? `
+      <div class="gallery-nav">
+        <button class="prev-img" data-gallery="${galleryId}"><i class="fas fa-chevron-left"></i></button>
+        <button class="next-img" data-gallery="${galleryId}"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    ` : '';
+    return `
+      <div class="blog-image-gallery" id="${galleryId}">
+        <div class="blog-slider-track" style="transform: translateX(0%);">
+          ${slidesHtml}
+        </div>
+        ${navButtons}
+      </div>
+    `;
+  }
+
+  function initGallery(galleryId, imagesCount) {
+    const galleryDiv = document.getElementById(galleryId);
+    if (!galleryDiv || imagesCount <= 1) return;
+    const track = galleryDiv.querySelector('.blog-slider-track');
+    if (!track) return;
+    const prevBtn = galleryDiv.querySelector('.prev-img');
+    const nextBtn = galleryDiv.querySelector('.next-img');
+    let currentIndex = 0;
+    const updateTransform = () => {
+      const percent = -(currentIndex * 100);
+      track.style.transform = `translateX(${percent}%)`;
+    };
+    prevBtn?.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + imagesCount) % imagesCount;
+      updateTransform();
+    });
+    nextBtn?.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % imagesCount;
+      updateTransform();
+    });
+  }
+
+  async function loadBlogPosts() {
+    const blogContainer = document.getElementById('blogPostsContainer');
+    try {
+      const snapshot = await getDocs(collection(db, "blog"));
+      if (snapshot.empty) {
+        blogContainer.innerHTML = `<div class="col-span-full text-center py-10 text-stone-400"><i class="far fa-newspaper text-3xl mb-2"></i><p>No blog posts yet. Chef will add updates soon.</p></div>`;
+        return;
+      }
+      let html = '';
+      const blogItems = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const blogId = doc.id;
+        const title = data.title || 'Chef note';
+        const textContent = data.textContent || '';
+        const videoUrl = data.videoUrl || '';
+        const images = data.images || [];
+        const { short, full, truncated } = truncateWords(textContent, 30);
+        
+        let mediaHtml = '';
+        if (images.length > 0) {
+          mediaHtml = renderImageGallery(images, blogId);
+        } else if (videoUrl) {
+          let embedLink = videoUrl;
+          if (videoUrl.includes('youtube.com/watch')) {
+            let vidId = new URL(videoUrl).searchParams.get('v');
+            if (vidId) embedLink = `https://www.youtube.com/embed/${vidId}`;
+          } else if (videoUrl.includes('youtu.be')) {
+            let vidId = videoUrl.split('/').pop();
+            embedLink = `https://www.youtube.com/embed/${vidId}`;
+          }
+          mediaHtml = `<div class="relative w-full aspect-video overflow-hidden bg-black"><iframe class="blog-video" src="${embedLink}" frameborder="0" allowfullscreen></iframe></div>`;
+        }
+        
+        html += `
+          <div class="blog-card" data-blog-id="${blogId}">
+            ${mediaHtml}
+            <div class="p-5">
+              <h3 class="font-serif text-xl font-bold text-gray-800 mb-2">${escapeHtml(title)}</h3>
+              <div class="blog-text">
+                <div class="blog-short-content">${escapeHtml(short).replace(/\n/g, '<br>')}</div>
+                <div class="blog-content-full" id="full-${blogId}">${escapeHtml(full).replace(/\n/g, '<br>')}</div>
+                ${truncated ? `<button class="read-more-btn" data-id="${blogId}">Read More <i class="fas fa-arrow-right"></i></button>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+        blogItems.push({ id: blogId, imagesCount: images.length });
+      });
+      blogContainer.innerHTML = html;
+      
+      document.querySelectorAll('.read-more-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const blogId = btn.getAttribute('data-id');
+          const fullDiv = document.getElementById(`full-${blogId}`);
+          const shortDiv = btn.previousElementSibling;
+          if (fullDiv.classList.contains('show')) {
+            fullDiv.classList.remove('show');
+            if(shortDiv) shortDiv.style.display = 'block';
+            btn.innerHTML = 'Read More <i class="fas fa-arrow-right"></i>';
+          } else {
+            fullDiv.classList.add('show');
+            if(shortDiv) shortDiv.style.display = 'none';
+            btn.innerHTML = 'Show Less <i class="fas fa-arrow-up"></i>';
+          }
+        });
+      });
+      
+      blogItems.forEach(item => {
+        if (item.imagesCount > 0) {
+          initGallery(`gallery-${item.id}`, item.imagesCount);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      blogContainer.innerHTML = `<div class="col-span-full text-center py-10 text-red-500">Failed to load blog. Please refresh.</div>`;
+    }
+  }
+
+  const dynamicGrid = document.getElementById('dynamicProductsGrid');
+  const searchInput = document.getElementById('searchInput');
+  let allDynamicProducts = [];
+  const phoneNumber = "256702586485";
+  function sendWhatsApp(productName, productPrice, productDesc) {
+    const message = `Hello Chef Kyegonza, I would like to order: ${productName} (${productPrice})\nDescription: ${productDesc}`;
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  }
+
+  async function loadDynamicProducts() {
+    dynamicGrid.innerHTML = `<div class="col-span-full flex justify-center py-12"><div class="spinner-border"></div><span class="ml-3 text-stone-500">Loading specials...</span></div>`;
+    const snapshot = await getDocs(collection(db, "food"));
+    if (snapshot.empty) {
+      dynamicGrid.innerHTML = `<div class="col-span-full text-center py-16 text-stone-400"><i class="fas fa-utensils text-4xl mb-2 opacity-50"></i><p>No additional specials today. Check back soon!</p></div>`;
+      return;
+    }
+    const products = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      products.push({
+        id: doc.id,
+        name: data.name || data.title || "Chef's Special",
+        description: data.description || "Freshly prepared",
+        price: data.price || "0/-",
+        image: data.image || "food1.jpg",
+        note: data.note || '',
+        redCrossActive: data.redCrossActive === true,
+        originalPrice: data.originalPrice || '',
+        newPrice: data.newPrice || ''
+      });
+    });
+    allDynamicProducts = products;
+    renderDynamicGrid(products);
+  }
+
+  function renderDynamicGrid(products) {
+    if (!products.length) {
+      dynamicGrid.innerHTML = `<div class="col-span-full text-center py-16 text-stone-400"><i class="fas fa-search"></i><p>No matching dishes found</p></div>`;
+      return;
+    }
+    let html = '';
+    products.forEach(prod => {
+      let priceHtml = '';
+      if (prod.redCrossActive && prod.newPrice) {
+        priceHtml = `<div class="price-cross"><span class="old-price">${prod.originalPrice || prod.price}</span> <i class="fas fa-times-circle"></i> <span class="new-price">${prod.newPrice}</span></div>`;
+      } else {
+        priceHtml = `<span class="bg-[#b28950] text-white px-3 py-1 rounded-full text-sm font-bold">${prod.price}</span>`;
+      }
+      const noteBadge = prod.note && prod.note.trim() ? `<div class="product-note-badge">${prod.note.slice(0, 30)}</div>` : '';
+      html += `
+        <div class="menu-card dynamic-product relative" data-name="${escapeHtml(prod.name)}" data-price="${escapeHtml(prod.redCrossActive ? prod.newPrice : prod.price)}" data-desc="${escapeHtml(prod.description)}">
+          ${noteBadge}
+          <div class="relative h-56 overflow-hidden"><img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${escapeHtml(prod.name)}" loading="lazy" onerror="this.src='food1.jpg'"></div>
+          <div class="p-5"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">${escapeHtml(prod.name)}</h3>${priceHtml}</div><p class="text-stone-500 text-sm mt-2 line-clamp-2">${escapeHtml(prod.description)}</p><button class="whatsapp-btn whatsapp-buy-dynamic"><i class="fab fa-whatsapp"></i> Buy via WhatsApp</button></div>
+        </div>
+      `;
+    });
+    dynamicGrid.innerHTML = html;
+    document.querySelectorAll('.dynamic-product .whatsapp-buy-dynamic').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const card = btn.closest('.menu-card');
+        const name = card.dataset.name;
+        const price = card.dataset.price;
+        const desc = card.dataset.desc;
+        sendWhatsApp(name, price, desc);
+      });
+    });
+  }
+  
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = allDynamicProducts.filter(p => p.name.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
+      renderDynamicGrid(filtered);
+    });
+  }
+
+  loadDynamicProducts();
+  loadBlogPosts();
+
+  window.togglePriceMenu = function(type) {
+    const localBlock = document.getElementById('localMenuBlock');
+    const contBlock = document.getElementById('contMenuBlock');
+    const btnLocal = document.getElementById('btnLocal');
+    const btnCont = document.getElementById('btnCont');
+    if(type === 'local') {
+      localBlock.classList.remove('hidden');
+      contBlock.classList.add('hidden');
+      btnLocal.classList.add('price-tab-active');
+      btnLocal.classList.remove('text-gray-300');
+      btnCont.classList.remove('price-tab-active');
+      btnCont.classList.add('text-gray-300');
+    } else {
+      localBlock.classList.add('hidden');
+      contBlock.classList.remove('hidden');
+      btnCont.classList.add('price-tab-active');
+      btnCont.classList.remove('text-gray-300');
+      btnLocal.classList.remove('price-tab-active');
+      btnLocal.classList.add('text-gray-300');
+    }
+  };
+  
+  document.querySelectorAll('.static-product .whatsapp-buy').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.menu-card');
+      const name = card.querySelector('h3')?.innerText || '';
+      const priceSpan = card.querySelector('.bg-\\[\\#b28950\\]')?.innerText || '0/-';
+      const desc = card.querySelector('p')?.innerText || '';
+      sendWhatsApp(name, priceSpan, desc);
+    });
+  });
+
+  // ACCOUNT POPUP
+  function showAccountPopup() {
+    const hasAccount = localStorage.getItem('hasAccount') === 'true';
+    const popupClosed = localStorage.getItem('accountPopupDismissed') === 'true';
+    if (hasAccount || popupClosed) return;
+    const popup = document.getElementById('accountPromptPopup');
+    if (popup) popup.style.display = 'flex';
+    const closeBtn = document.getElementById('closePopupBtn');
+    const applyBtn = document.getElementById('popupApplyBtn');
+    const dismiss = () => {
+      popup.style.display = 'none';
+      localStorage.setItem('accountPopupDismissed', 'true');
+    };
+    closeBtn?.addEventListener('click', dismiss);
+    applyBtn?.addEventListener('click', () => { localStorage.setItem('hasAccount', 'true'); dismiss(); });
+  }
+  setTimeout(showAccountPopup, 2000);
+  
+  function handleCreateAccountClick() { localStorage.setItem('hasAccount', 'true'); }
+  document.querySelectorAll('#navCreateAccountBtn, #createAccountFlyout, #mobileDrawer a[href="apply.html"]').forEach(btn => {
+    btn.addEventListener('click', handleCreateAccountClick);
+  });
+  document.getElementById('popupApplyBtn')?.addEventListener('click', handleCreateAccountClick);
+
+  // DROPDOWN CLICK LOGIC: full height, right-to-left slide
+  const pagesBtn = document.getElementById('pagesFlyoutBtn');
+  const flyoutPanel = document.getElementById('pagesFlyoutPanel');
+  const flyoutOverlay = document.getElementById('flyoutOverlay');
+  const closeFlyoutBtn = document.getElementById('closeFlyoutPanel');
+  
+  function openFlyout() {
+    flyoutPanel.classList.add('open');
+    flyoutOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFlyout() {
+    flyoutPanel.classList.remove('open');
+    flyoutOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  pagesBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openFlyout();
+  });
+  closeFlyoutBtn?.addEventListener('click', closeFlyout);
+  flyoutOverlay?.addEventListener('click', closeFlyout);
+  document.getElementById('fullMenuFlyoutLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+    closeFlyout();
+  });
+  document.getElementById('fullMenuLink')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('featured').scrollIntoView({ behavior: 'smooth' }); });
+  document.getElementById('mobileFullMenu')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('featured').scrollIntoView({ behavior: 'smooth' }); const drawerDiv = document.getElementById('mobileDrawer'); const innerDiv = drawerDiv.querySelector('div'); drawerDiv.classList.add('invisible', 'opacity-0'); innerDiv.classList.add('translate-x-full'); });
+  
+  // Mobile drawer
+  const mobileBtn = document.getElementById('mobileMenuBtn');
+  const drawer = document.getElementById('mobileDrawer');
+  const drawerInner = drawer.querySelector('div');
+  const closeDrawer = document.getElementById('closeDrawerBtn');
+  mobileBtn.onclick = () => { drawer.classList.remove('invisible', 'opacity-0'); drawerInner.classList.remove('translate-x-full'); };
+  closeDrawer.onclick = () => { drawerInner.classList.add('translate-x-full'); setTimeout(() => drawer.classList.add('invisible', 'opacity-0'), 300); };
+  
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const id = this.getAttribute('href');
+      if(id && id !== '#') {
+        e.preventDefault();
+        const el = document.querySelector(id);
+        if(el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+      }
+    });
+  });
+  document.getElementById('cancelAnubisBadgeBtn')?.addEventListener('click', () => {
+    document.getElementById('madeByAnubisBadge').style.display = 'none';
+  });
+</script>
+</body>
+</html>
