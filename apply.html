@@ -1,0 +1,495 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Apply | Chef Kyegonza - Identity Management</title>
+  <link rel="icon" href="ch.png" type="image/x-icon">
+  <meta name="description" content="Authorized portal for Chef Kyegonza user registration and data synchronization. Built by Anubis Digital.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ANUBIS DIGITAL - LOGIC OVER HYPE ARCHITECTURE 
+       PROJECT: CHEF KYEGONZA ECOSYSTEM (V2.0)
+       DESIGN PHILOSOPHY: ZERO RADIUS / HIGH-CONTRAST / FUNCTIONAL 
+    */
+    
+    :root {
+      --primary-chef: #4a0404;
+      --accent-gold: #b28950;
+      --bg-stone: #fefcf8;
+      --border-light: #eae4dc;
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      border-radius: 0px !important; /* Enforced Square Design */
+    }
+
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: var(--bg-stone); 
+      color: #1a1a1a;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .brand-card { 
+      background: white; 
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.03); 
+      border: 1px solid var(--border-light); 
+      transition: transform 0.3s ease;
+    }
+
+    input, button, textarea { 
+      outline: none; 
+      appearance: none;
+    }
+
+    input {
+      border: 1px solid #d1c5bb;
+      background: #fafafa;
+      transition: all 0.2s ease;
+    }
+
+    input:focus { 
+      border-color: var(--primary-chef); 
+      background: white;
+      box-shadow: inset 0 0 0 1px var(--primary-chef);
+    }
+
+    .btn-primary { 
+      background: var(--primary-chef); 
+      color: white; 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: 2px; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      border: none; 
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { 
+      background: var(--accent-gold); 
+      letter-spacing: 3px;
+    }
+
+    .btn-primary:disabled {
+      background: #8b735b;
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    .btn-outline { 
+      border: 1px solid #d1c5bb; 
+      background: white; 
+      font-weight: 600; 
+      transition: 0.2s; 
+      cursor: pointer; 
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-outline:hover { 
+      background: #f5efe9; 
+      border-color: var(--primary-chef); 
+    }
+
+    .error-box { 
+      background: #fff5f5; 
+      color: #c53030; 
+      border: 1px solid #feb2b2; 
+      border-left: 5px solid #c53030;
+      padding: 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .success-box { 
+      background: #f0fff4; 
+      color: #276749; 
+      border: 1px solid #9ae6b4; 
+      border-left: 5px solid #38a169;
+      padding: 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Loading Spinner */
+    .loader {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #FFF;
+      border-bottom-color: transparent;
+      border-radius: 50% !important;
+      display: inline-block;
+      animation: rotation 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* System Log Monitor */
+    #systemLog {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 10px;
+      color: #666;
+      max-height: 100px;
+      overflow-y: auto;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, OAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    /* CORE ARCHITECTURE DATA 
+       --------------------------------------------------
+    */
+    const firebaseConfig = {
+      apiKey: "AIzaSyC473vxlU0ctrncjR8vUO-RcJc3nYrzX7I",
+      authDomain: "chef-eab8e.firebaseapp.com",
+      projectId: "chef-eab8e",
+      storageBucket: "chef-eab8e.firebasestorage.app",
+      messagingSenderId: "46565559235",
+      appId: "1:46565559235:web:dbd2e768bbb2e69c06cb76",
+      measurementId: "G-0ZTZYMZNTV"
+    };
+
+    const BACKEND_ENDPOINT = "https://chef-welcome-email.lubegadoreen02.workers.dev";
+    const PASSKEY_ADMIN = "ANUBIS_ST_68";
+
+    // Initialize Services
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+    const appleProvider = new OAuthProvider('apple.com');
+
+    // DOM References
+    const container = document.getElementById('authContainer');
+    const authTitle = document.getElementById('authTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleLink = document.getElementById('toggleLink');
+    const nameGroup = document.getElementById('nameGroup');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const logConsole = document.getElementById('logList');
+    const logoutSection = document.getElementById('logoutSection');
+    const userDisplay = document.getElementById('userDisplay');
+
+    let isLoginMode = true;
+
+    /* INTERNAL ENGINE FUNCTIONS
+       --------------------------------------------------
+    */
+
+    function logToSystem(msg) {
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.innerText = `[${time}] ${msg}`;
+      logConsole.prepend(entry);
+    }
+
+    function showFeedback(type, message) {
+      feedbackArea.innerHTML = `<div class="${type === 'error' ? 'error-box' : 'success-box'}">${message}</div>`;
+      feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    /**
+     * BRIDGE: TALK TO CLOUDFLARE WORKER EMAIL SYSTEM
+     */
+    async function triggerWelcomeSequence(email, name) {
+      logToSystem(`Initiating POST request to Cloudflare Worker: ${BACKEND_ENDPOINT}...`);
+      
+      try {
+        const response = await fetch(BACKEND_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, name: name })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          logToSystem("Email dispatched via Cloudflare & Resend successfully.");
+          showFeedback('success', `Welcome, ${name}. Identity verified and welcome email dispatched.`);
+        } else {
+          throw new Error(result.error || "Cloudflare Worker rejected dispatch request.");
+        }
+      } catch (err) {
+        logToSystem(`EMAIL ENGINE ERROR: ${err.message}`);
+        showFeedback('error', `Account created, but email engine failed: ${err.message}`);
+      }
+    }
+
+    /**
+     * CORE AUTHENTICATION HANDLER
+     */
+    async function executeAuthentication() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const fullName = document.getElementById('nameInput')?.value.trim();
+
+      // Clear previous
+      feedbackArea.innerHTML = '';
+      
+      // Validation Logic
+      if (!email || !password) {
+        showFeedback('error', 'Incomplete credentials. Email and Password required.');
+        return;
+      }
+      if (!isLoginMode && !fullName) {
+        showFeedback('error', 'Legal Identity required for database registration.');
+        return;
+      }
+
+      // UI Lock
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="loader"></span> PROCESSING...`;
+      logToSystem(`Starting ${isLoginMode ? 'Login' : 'Signup'} flow for ${email}`);
+
+      try {
+        if (isLoginMode) {
+          // SIGN IN FLOW
+          await signInWithEmailAndPassword(auth, email, password);
+          logToSystem("User session established.");
+        } else {
+          // SIGN UP FLOW
+          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = userCred.user.uid;
+          
+          logToSystem("Firebase entry created. Syncing to Firestore...");
+          
+          await setDoc(doc(db, "users", uid), {
+            uid: uid,
+            email: email,
+            name: fullName,
+            created_at: new Date().toISOString(),
+            platform_role: "subscriber",
+            admin_handshake: PASSKEY_ADMIN
+          });
+
+          logToSystem("Firestore profile synchronized.");
+          await triggerWelcomeSequence(email, fullName);
+        }
+      } catch (err) {
+        logToSystem(`AUTH ERROR: ${err.code}`);
+        let readableError = err.message;
+        
+        if (err.code === 'auth/email-already-in-use') readableError = "Identity exists. Please sign in.";
+        if (err.code === 'auth/weak-password') readableError = "Security risk: Password must be 6+ characters.";
+        if (err.code === 'auth/invalid-credential') readableError = "Access denied. Check credentials.";
+        
+        showFeedback('error', readableError);
+        submitBtn.disabled = false;
+        submitBtn.innerText = isLoginMode ? 'SIGN IN' : 'SIGN UP';
+      }
+    }
+
+    /**
+     * PROVIDER HANDLING (GOOGLE/APPLE)
+     */
+    async function handleSocialAuth(provider, name) {
+      logToSystem(`Triggering ${name} OAuth Popup...`);
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          logToSystem("New social user detected. Creating profile...");
+          await setDoc(docRef, {
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName || "Elite Guest",
+            created_at: new Date().toISOString(),
+            provider: name,
+            admin_handshake: PASSKEY_ADMIN
+          });
+          await triggerWelcomeSequence(user.email, user.displayName);
+        }
+      } catch (err) {
+        showFeedback('error', `Provider Failure: ${err.message}`);
+      }
+    }
+
+    /**
+     * STATE MANAGEMENT
+     */
+    function toggleViewMode() {
+      isLoginMode = !isLoginMode;
+      authTitle.innerText = isLoginMode ? 'IDENTIFY' : 'REGISTER';
+      submitBtn.innerText = isLoginMode ? 'SIGN IN' : 'SIGN UP';
+      nameGroup.classList.toggle('hidden', isLoginMode);
+      toggleLink.innerText = isLoginMode ? "Need Access? Create Account" : "Registered? Sign In";
+      logToSystem(`UI Mode switched to ${isLoginMode ? 'Login' : 'Signup'}`);
+    }
+
+    // Observer
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        container.classList.add('hidden');
+        logoutSection.classList.remove('hidden');
+        userDisplay.innerText = user.email;
+        logToSystem("Session Active.");
+      } else {
+        container.classList.remove('hidden');
+        logoutSection.classList.add('hidden');
+        logToSystem("Session Terminated.");
+      }
+    });
+
+    // Event Listeners
+    submitBtn.onclick = executeAuthentication;
+    toggleLink.onclick = (e) => { e.preventDefault(); toggleViewMode(); };
+    document.getElementById('googleBtn').onclick = () => handleSocialAuth(googleProvider, 'Google');
+    document.getElementById('appleBtn').onclick = () => handleSocialAuth(appleProvider, 'Apple');
+    document.getElementById('exitBtn').onclick = () => signOut(auth);
+    
+    logToSystem("System Core Ready.");
+  </script>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <nav class="bg-white border-b border-stone-200 px-6 py-5 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <img src="ch.png" alt="Chef Kyegonza" class="w-10 h-10 object-contain grayscale">
+        <div>
+          <h1 class="text-lg font-bold tracking-tighter text-[#4a0404] uppercase">Chef Kyegonza</h1>
+          <p class="text-[8px] uppercase tracking-[0.3em] text-stone-400 font-bold">Identity Portal</p>
+        </div>
+      </div>
+      <a href="index.html" class="text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-[#4a0404] transition-colors">
+        <i class="fas fa-arrow-left mr-2"></i> Exit
+      </a>
+    </div>
+  </nav>
+
+  <main class="flex-grow flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      
+      <div id="authContainer" class="brand-card p-10 bg-white">
+        <div class="text-center mb-8">
+          <h2 id="authTitle" class="text-3xl font-serif font-bold text-gray-900 tracking-tight uppercase">Identify</h2>
+          <div class="h-1 w-12 bg-[#4a0404] mx-auto mt-4"></div>
+        </div>
+
+        <div id="feedbackArea"></div>
+
+        <form onsubmit="return false;" class="space-y-6">
+          <div id="nameGroup" class="hidden">
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-2">Legal Full Name</label>
+            <input type="text" id="nameInput" class="w-full p-4 text-sm" placeholder="John Doe">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-2">Email Address</label>
+            <input type="email" id="email" class="w-full p-4 text-sm" placeholder="email@example.com">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-2">Access Key</label>
+            <input type="password" id="password" class="w-full p-4 text-sm" placeholder="••••••••">
+          </div>
+
+          <button id="submitBtn" class="btn-primary w-full py-5 text-xs">SIGN IN</button>
+        </form>
+
+        <div class="relative flex items-center my-10">
+          <div class="flex-grow border-t border-stone-100"></div>
+          <span class="mx-4 text-[9px] font-bold text-stone-300 uppercase tracking-widest">Connect Identity</span>
+          <div class="flex-grow border-t border-stone-100"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <button id="googleBtn" class="btn-outline py-4 text-[9px] font-bold">
+            <i class="fab fa-google mr-2 text-stone-400"></i> Google
+          </button>
+          <button id="appleBtn" class="btn-outline py-4 text-[9px] font-bold">
+            <i class="fab fa-apple mr-2 text-stone-400"></i> Apple
+          </button>
+        </div>
+
+        <div class="mt-10 text-center">
+          <a href="#" id="toggleLink" class="text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-[#4a0404] underline decoration-2 underline-offset-4 transition-all">
+            Need Access? Create Account
+          </a>
+        </div>
+
+        <div id="systemLog" class="mt-10">
+          <p class="font-bold uppercase text-[8px] mb-2 tracking-widest">Live Engine Logs</p>
+          <div id="logList" class="space-y-1"></div>
+        </div>
+      </div>
+
+      <div id="logoutSection" class="brand-card p-16 text-center bg-white hidden border-t-4 border-[#4a0404]">
+        <div class="mb-8">
+          <i class="fas fa-user-shield text-4xl text-[#4a0404]"></i>
+        </div>
+        <h3 class="text-2xl font-serif font-bold text-gray-900 mb-2">Access Authorized</h3>
+        <p id="userDisplay" class="text-stone-400 text-sm font-medium mb-10"></p>
+        
+        <div class="space-y-4">
+          <a href="index.html" class="btn-primary block w-full py-5 text-[10px] no-underline">Return to Home</a>
+          <button id="exitBtn" class="btn-outline w-full py-5 text-[10px]">Terminate Session</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="bg-[#0a0a0a] py-20 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="text-left">
+        <h4 class="text-white/20 text-[10px] font-bold uppercase tracking-[0.4em] mb-6">Architecture</h4>
+        <ul class="text-white/10 text-[9px] space-y-2 uppercase tracking-widest">
+          <li>Firebase Auth V12</li>
+          <li>Cloud Firestore DB</li>
+          <li>Cloudflare Workers</li>
+          <li>Resend SMTP Portal</li>
+        </ul>
+      </div>
+      <div class="text-center">
+        <img src="ch.png" class="w-12 h-12 mx-auto grayscale opacity-10 mb-6" alt="logo">
+        <p class="text-white/20 text-[9px] uppercase tracking-[0.5em]">Logic Over Hype</p>
+      </div>
+      <div class="text-right">
+        <h4 class="text-white/20 text-[10px] font-bold uppercase tracking-[0.4em] mb-6">Development</h4>
+        <p class="text-white/10 text-[9px] uppercase tracking-widest">Lead Architect: Lubega Robert</p>
+        <p class="text-white/5 text-[8px] uppercase tracking-widest mt-2">Powered by Anubis Digital &copy; 2026</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="hidden">
+    <p>The Chef Kyegonza digital portal is a bespoke application designed for the Ugandan catering market. 
+    This system utilizes a decoupled architecture where sensitive email dispatch is handled by a secondary Cloudflare Worker.
+    Every account creation triggers a secure fetch request to https://chef-welcome-email.lubegadoreen02.workers.dev.
+    The frontend is built with an enforced 0px border radius to maintain a professional, architectural aesthetic.
+    Error handling includes specific Firebase Auth error code translation for end-user clarity.
+    The system utilizes a status monitor (Live Engine Logs) to assist the developer in real-time debugging on mobile devices.
+    Anubis Digital remains the core architect for this ecosystem, ensuring that Chef Kyegonza's digital presence matches the elite quality of his physical services.
+    Data validation is handled client-side via asynchronous catch blocks and server-side via robust Firebase Security Rules. 
+    The ANUBIS_ST_68 passkey acts as the administrative handshake, allowing the front-end to communicate securely with protected Firestore collections.
+    This ensures that while the site remains open for public engagement, administrative functions remain locked behind cryptographic validation.</p>
+  </div>
+
+</body>
+</html>
